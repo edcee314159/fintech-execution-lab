@@ -1,19 +1,25 @@
-# Research map
+# 研究内容一览
 
-| ID | Question | Frozen full-study evidence |
+项目分为九项研究，从基础拆单模型逐步加入参数误差、历史数据和成交量限制。表中的英文编号对应代码中的研究名称，方便查找和运行。
+
+| 编号 | 用通俗的话说，这一项研究什么 | 已保存的数值结果 |
 |---|---|---|
-| core | How does inventory risk trade off against temporary-impact cost? | ../results/core/results.json |
-| sensitivity | How do volatility, impact and risk aversion change schedules? | ../results/sensitivity/results.json |
-| robustness | What is the regret under misspecified parameters? | ../results/robustness/results.json |
-| statistics | Do repeated-stream Monte Carlo intervals and convergence agree with model theory? | ../results/statistics/results.json |
-| solver | Do three numerical methods agree, and what is their observed local runtime/storage? | ../results/solver/results.json |
-| historical | How do lagged volatility estimates perform on a held-out historical FX period? | ../results/historical/results.json |
-| volume | How do synthetic volume profiles affect arrival and VWAP comparisons? | ../results/volume/results.json |
-| participation | When is the order feasible, and how do capped schedules compare? | ../results/participation/results.json |
-| real-volume | Do past-only equity volume forecasts support subsequent capacity-feasible execution plans? | ../results/real-volume/results.json |
+| `core` | 卖得快可能增加交易对价格的影响，卖得慢会增加持仓风险，怎样权衡？ | [基础模型](../results/core/results.json) |
+| `sensitivity` | 价格波动更大、交易对价格的影响更强，或更重视风险时，拆单计划会怎样变？ | [参数变化实验](../results/sensitivity/results.json) |
+| `robustness` | 如果估计错了参数，按错误参数制定的计划会比相应基准差多少？ | [参数误差实验](../results/robustness/results.json) |
+| `statistics` | 随机模拟的平均值和误差范围是否符合模型推导？增加模拟次数后，结果是否更稳定？ | [统计检查](../results/statistics/results.json) |
+| `solver` | 三种数值方法求解同一个问题，答案是否一致？运行时间和存储需求如何？ | [求解方法比较](../results/solver/results.json) |
+| `historical` | 只用过去的外汇数据估计波动，放到之后留出的历史时期检验，表现怎样？ | [历史波动实验](../results/historical/results.json) |
+| `volume` | 人工生成的日内成交量分布变化后，按时间或按成交量拆单的比较会怎样变？ | [模拟成交量实验](../results/volume/results.json) |
+| `participation` | 如果每个时段只能卖出市场成交量的一小部分，订单还能否完成？不同方法有何差别？ | [成交上限实验](../results/participation/results.json) |
+| `real-volume` | 根据过去成交量制定的计划，在后续真实成交量记录下能否完成？ | [真实成交量实验](../results/real-volume/results.json) |
 
-Each evidence folder contains a manifest, numerical output and figures/notes. Original designs are packaged under src/execution_research/inputs or src/execution_research/studies/<ID>/inputs. These full designs are the default for the unified run command.
+各结果目录还保存了文件核对清单、图表和研究说明。前八项研究的固定实验设置位于 `src/execution_research/inputs` 或 `src/execution_research/studies/<ID>/inputs`，统一运行命令默认使用这些设置。真实成交量实验的准备步骤见[单独说明](real-volume.md)。
 
-Finance assumptions remain those of the individual modules. Daily ECB reference rates are not executable quotes, impact parameters and synthetic market volumes are not empirically calibrated execution liquidity, and guaranteed planned fills omit stochastic fill risk. Timing fits over tested sizes do not establish asymptotic complexity.
+## 怎样理解这些结果
 
-A participation-constrained plan is checked against integer interval caps and continuous relaxation certificates. Its objective difference against the original rounded plan includes constraints and rounding effects. It is not a pure constraint premium, nor an integer global-optimality proof.
+不同模块采用各自说明中的金融假设。欧洲央行每日参考汇率无法代表实际可成交的价格；人工生成的成交量和假设的价格冲击参数，也不能直接代表真实市场的流动性。假设计划中的交易一定成交，会忽略成交本身的不确定性。
+
+运行时间的比较只覆盖实际测试的问题规模，不能单凭这些数据证明算法在所有规模下的增长规律。
+
+带成交上限的计划会检查每个时段的整数数量，并与允许小数数量时的计算下界比较。它与原始取整计划的目标值差异同时包含限制条件和取整的影响，不能全部解释为成交限制带来的额外成本，也不能据此证明整数计划全局最优。

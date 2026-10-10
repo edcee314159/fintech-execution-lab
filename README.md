@@ -1,18 +1,53 @@
-# FinTech Execution Lab
+# FinTech Execution Lab：大额订单拆分研究
 
-A reproducible Python research toolkit for trading execution: temporary-impact costs, inventory risk, numerical optimization, Monte Carlo inference, volume benchmarks and participation constraints.
+一大笔股票卖单，应该一次卖完，还是分几次卖？每次卖多少、隔多久卖一次？这个项目用 Python 建立模型、运行模拟，并结合历史成交量，研究这些问题。
 
-The package contains the core model, seven simulation/calibration extensions and a chronological SPY/AAPL intraday-volume pilot. It is research software under simplified assumptions. Historical replay is a capacity diagnostic, not actual fills or evidence of profitability.
+这里关注的是**怎样执行一笔已经决定要卖出的订单**。卖得太集中，可能压低成交价格；卖得太慢，手里还没卖掉的股票又会面临价格波动。项目比较不同的拆单方式，观察它们在交易成本、价格风险和完成订单方面的差别。
 
-## Install and verify
+## 项目能做什么
 
-Windows and Python3.12 are the verified environment. Run from the repository root using a new absolute workspace outside the repository:
+- **生成卖出计划。** 给定股票数量、交易时长、价格波动等条件，计算各个时间段应卖出多少股，并与“每隔一段时间卖出相同数量”的方法比较。
+- **比较成本和风险。** 模拟多条可能的价格路径，观察平均成本、结果的波动，以及比较结果有多不确定。这种反复随机模拟的方法叫作“蒙特卡洛模拟”。
+- **检查模型是否可靠。** 改变参数，故意使用不准确的参数，并让不同求解方法计算同一个问题，检查结果是否一致、计算需要多长时间。
+- **考虑市场成交量。** 为每个时间段设置卖出上限，例如最多占该时段市场成交量的 10%，检查订单能否在规定时间内完成。
+- **用历史数据检验计划。** 使用 SPY、AAPL 的日内成交量，只根据此前的交易日制定计划，再用之后实际记录的成交量检查计划的完成情况。
+
+## 可以直接看到哪些成果
+
+仓库已经保存了研究报告、数值结果和图表，无需先安装程序就能阅读：
+
+| 想了解什么 | 从这里开始 |
+|---|---|
+| 九项研究分别解决什么问题 | [研究内容一览](docs/research-map.md) |
+| 每个时段卖多少、不同方法的成本如何分布 | [基础模型结果与图表](results/core/) |
+| 历史成交量实验用了什么方法、得到了什么结果 | [真实成交量中文解读](results/real-volume/中文研究解读.md) |
+| 如何重新运行实验 | [运行与复现说明](docs/reproduction.md) |
+| 公式、假设和模型推导 | [模型说明](docs/original-core/model.md) |
+| 测试和安装检查记录 | [验证记录](docs/verification.md) |
+
+历史成交量实验使用每个目标日之前的 5 个完整交易日预测成交量，比较 3 种预测方法、3 种订单大小和 3 种拆单方法。订单大小按过去的平均每日成交量确定。
+
+这次实验覆盖 2 个标的、5 个评估日期，共生成 **30 份成交量预测、270 条方案记录**。其中 264 条成功生成计划，229 条在历史成交量回放中完成；35 条计划结束时仍有股票未卖出，另外 6 条因预测容量不足而未生成计划。
+
+这些数字说明，在预测成交量下可行的计划，到了后续交易日也可能无法完成。同一个交易日被用于多种方案比较，因此 270 条记录并不代表 270 个独立交易日。详细结果见[完整研究报告](results/real-volume/research-note.md)。
+
+## 金融方法与编程实现
+
+金融部分研究交易对价格的影响、未卖出持仓的价格风险、成交量预测，以及市场容量对订单的限制。模型会在预期成本和成本波动之间作权衡，并比较按时间均匀卖出、按成交量分配卖出等方法。
+
+编程部分负责数值求解、随机模拟、历史数据处理、结果核对和图表生成。代码被打包为可安装的 Python 工具，并配有自动测试，让同一组条件下的实验可以重新运行和检查。
+
+## 如何安装和运行
+
+已经验证的运行环境是 **Windows 和 Python 3.12**。在仓库根目录打开 PowerShell，运行下面的命令。安装和实验输出目录应放在仓库之外，并使用尚未存在的新目录。
 
 ```powershell
 python tools/bootstrap.py --workspace D:\Codex\FinTech-Execution-Lab\install --test
 ```
 
-Bootstrap builds a wheel in external staging, creates an isolated environment, installs pinned dependencies, runs all tests and smoke-checks the original eight studies. Initial dependency installation needs internet; use `--wheelhouse` for an existing offline wheel directory. Generated files stay outside source.
+这条命令会构建安装包、创建独立的 Python 环境、安装固定版本的依赖，随后运行全部测试，并对前八项研究做快速运行检查。首次安装需要联网；已有离线依赖目录时，可以使用 `--wheelhouse`。生成的文件会保存在指定的外部目录。
+
+安装完成后，可以依次查看可运行的研究、检查环境，以及运行前八项完整研究：
 
 ```powershell
 D:\Codex\FinTech-Execution-Lab\install\venv\Scripts\python.exe -m execution_research list
@@ -20,23 +55,24 @@ D:\Codex\FinTech-Execution-Lab\install\venv\Scripts\python.exe -m execution_rese
 D:\Codex\FinTech-Execution-Lab\install\venv\Scripts\python.exe -m execution_research run all --output D:\Codex\FinTech-Execution-Lab\full-run
 ```
 
-Installed commands are `execution-lab`, `execution-lab-research` and `execution-volume-validate`. Smoke runs are installation diagnostics; full research uses the packaged fixed designs. Use new output directories to preserve prior results.
+可用命令包括 `execution-lab`、`execution-lab-research` 和 `execution-volume-validate`。快速运行检查用于确认工具能正常工作；完整研究使用项目内保存的固定实验设置。每次运行请使用新输出目录，保留此前结果。
 
-## Research and evidence
+真实成交量实验还需要单独准备市场数据，步骤见[真实成交量实验说明](docs/real-volume.md)。原始 FirstRate Data 行情和本地价格、成交量数组没有上传；公开结果保留了衍生指标、拆单计划和图表。数据供应商可能替换样本文件，程序会核对文件指纹，拒绝把变化后的数据当成原来的实验输入。
 
-- [Research map](docs/research-map.md)
-- [Reproduction guide](docs/reproduction.md)
-- [Model assumptions](docs/original-core/model.md)
-- [Historical data notice](docs/studies/historical/DATA-NOTICE.md)
-- [Real intraday volume: methods and reproduction](docs/real-volume.md)
-- [Frozen real-volume research report](results/real-volume/research-note.md)
+## 阅读结果时需要注意什么
 
-The historical volume pilot uses five prior complete sessions to predict each of five evaluation dates, three predictors, three order sizes and three planners. It contains30 forecasts and270 scenario records, with264 plans and229 completed retrospective replays. Repeated scenarios share market dates and are not independent observations. Raw FirstRate Data inputs and private price/volume arrays are excluded. Vendor sample URLs may rotate; frozen hashes reject changed inputs.
+这是一个采用简化假设的研究工具。基础模型只研究卖单，并假设计划中的交易都能成交；带成交量限制的实验进一步检查数量是否能完成，但历史回放也不能证明真实下单一定能成交，更不能证明可以盈利。
 
-Saved numerical studies are frozen evidence. Report wording and metadata are maintained separately from financial calculations; source hashes inside prior results identify the producing revision. Current manifests describe the distributed files. Simulation volume profiles remain synthetic; daily ECB references are not executable quotes. Prices, impact, spread, queue and fill assumptions limit real-market interpretation. A continuous-relaxation bound does not prove integer global optimality.
+部分成交量实验使用人工生成的数据；历史外汇实验采用欧洲央行的每日参考汇率，无法代表实际可成交的报价。真实成交量实验的评估期较短，数据是否覆盖全市场成交量也尚未独立核实。
 
-Distribution version0.3.1; model kernel interface version0.1.0. Tests cover financial accounting, analytical moments, numerical solutions, chronology, integer quotas, feasibility, residual marking and output safety. See [verification](docs/verification.md) for the release check record. GitHub Actions configuration runs the same external build/install/check workflow.
+实际交易还会受到买卖价差、手续费、排队顺序和订单对市场的影响。项目没有完整模拟这些因素，价格与成交假设也有局限。模型中的冲击参数和风险偏好并未用实际交易校准。成交量预测更准确，也不必然意味着成本更低或订单更容易完成。
 
-## Attribution and data
+模型先求出允许小数股数的解，再转换为整数股数；相关下界用于检查结果，但不代表已证明整数方案是所有可行方案中最优的。
 
-Implementation and research preparation use AI assistance. Financial references and data attribution are retained in their study notes. Data are governed by their source conditions; source notices do not grant a project-code license. No code license is asserted by this repository.
+## 版本、验证与来源
+
+当前安装包版本为 `0.3.1`，核心模型接口版本为 `0.1.0`。发布前的安装版通过了 **188 项自动测试**，并完成前八项研究的快速运行检查和真实成交量实验。测试涵盖成本计算、数值求解、历史数据的时间顺序、整数数量和成交上限等内容。[GitHub 自动验证](https://github.com/edcee314159/fintech-execution-lab/actions)也会检查构建、安装和运行情况。
+
+保存的研究结果对应各自的实验版本。文档措辞可以单独更新；结果内的来源指纹用于追溯当时的计算代码，当前文件清单用于核对仓库内容。详见[验证记录](docs/verification.md)。
+
+代码实现和研究整理使用了 AI 辅助。金融文献与数据来源保留在相关研究说明中；历史数据的使用条件见[数据来源说明](docs/studies/historical/DATA-NOTICE.md)。数据来源的许可不等于项目代码许可，本仓库目前未声明代码许可证。
