@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "source": {
+    "provider": "European Central Bank",
+    "url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip",
+    "member": "eurofxref-hist.csv",
+    "max_download_bytes": 5000000,
+    "required_columns": [
+      "Date",
+      "USD",
+      "GBP",
+      "HKD"
+    ],
+    "copyright_url": "https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html",
+    "methodology_url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
+  },
+  "data_start": "2021-12-01",
+  "data_end": "2025-12-31",
+  "training_start": "2022-01-01",
+  "training_end": "2023-12-31",
+  "evaluation_start": "2024-01-01",
+  "evaluation_end": "2025-12-31",
+  "assets": {
+    "GBPUSD": {
+      "numerator": "USD",
+      "denominator": "GBP",
+      "units": "USD per GBP"
+    },
+    "HKDUSD": {
+      "numerator": "USD",
+      "denominator": "HKD",
+      "units": "USD per HKD"
+    }
+  },
+  "rolling_windows": [
+    20,
+    60,
+    120
+  ],
+  "outlier_absolute_log_return_flag": 0.05,
+  "min_training_returns": 250,
+  "calibration": {
+    "primary": "calendar_elapsed_minutes",
+    "secondary": "fixed_1440_minutes_per_reference_step",
+    "normal_95_multiplier": 1.959963984540054,
+    "annual_calendar_minutes": 525600,
+    "benchmark_price": 100
+  },
+  "base": {
+    "quantity": 100000,
+    "duration": 60,
+    "intervals": 60,
+    "price": 100,
+    "volatility": 0.03,
+    "impact": 0.00001,
+    "risk_aversion": 0.00001,
+    "trials": 200,
+    "seed": 20261009
+  },
+  "cleaning_policy": "Sort dates; collapse identical selected-rate duplicates, reject conflicting duplicates; drop missing/non-finite/non-positive rate rows with full audit; never forward fill; preserve flagged extreme returns; use actual calendar gaps.",
+  "scope": "Historical FX reference data calibrate volatility only. Synthetic $100 price-normalized instruments demonstrate the unchanged execution core. Impact, risk preference and intraday diffusion remain assumptions. No real-trade backtest.",
+  "holdout_policy": "Freeze training on 2022-2023; evaluate 2024-2025. Rolling parameters use returns ending no later than the previous reference date. Current historical snapshot is not a point-in-time vintage."
+}

@@ -1,0 +1,15 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+.env
+
+# Licensed raw market data and local replay diagnostics
+private-data/
+private-diagnostics/
+*_1min.csv
+*-sample.zip

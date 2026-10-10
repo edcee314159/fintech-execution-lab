@@ -1,0 +1,11 @@
+{
+  "quantity": 100000,
+  "duration": 60,
+  "intervals": 60,
+  "price": 100,
+  "volatility": 0.03,
+  "impact": 0.00001,
+  "risk_aversion": 0.00001,
+  "trials": 200,
+  "seed": 20261009
+}

@@ -1,0 +1,43 @@
+{
+  "symbols": [
+    "SPY",
+    "AAPL"
+  ],
+  "expected_dates": [
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02"
+  ],
+  "lookback": 5,
+  "fractions": [
+    0.01,
+    0.05,
+    0.09
+  ],
+  "participation_rate": 0.1,
+  "impact": 1e-05,
+  "risk_aversion": 1e-05,
+  "sources": {
+    "SPY": {
+      "url": "https://x01.frd-data.com/firstratedata_sample_SPY.zip",
+      "archive_sha256": "3d11b9aad0c388ada75af58bc6a57f67febb8b08be178b2c6e2bd1f5cb33569a",
+      "csv_sha256": "8be8bad5447612e69461c1783ae8c825000c9490f62a6e6d786916613f9aef9e",
+      "csv_member": "SPY_1min.csv"
+    },
+    "AAPL": {
+      "url": "https://x01.frd-data.com/firstratedata_sample_AAPL.zip",
+      "archive_sha256": "f4628ef5ede8816c5ac430293fd312ff84a3491e35ca390ea8391e6a8a9ed573",
+      "csv_sha256": "eea6f93b0230cbf72c8cd8adb3bca84f008c81406b3e1963a03b9ff20307f1fd",
+      "csv_member": "AAPL_1min.csv"
+    }
+  },
+  "scope": "Fixed short-sample pilot; do not infer long-term effectiveness",
+  "source_access_date": "2026-10-09"
+}

@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "01-runtime-scaling.png": "3403df4730fad2b8dc8ad48e02755937eed209db2d64cf2d2344d5b703070669",
+    "02-input-storage.png": "6531bdbabd22c69191408fa115fa7915c0c12f6cf455d1e3e7649cffe7361cfa",
+    "03-numerical-accuracy.png": "720c669079fbb1f3807ea790d7d5a9af6335abe7ef91f9d3d8ff13b577700656",
+    "04-product-pipeline.png": "a9c42832630af61aa3717525743bb4887ac74d618a71052937c391b514762ce4",
+    "accuracy.csv": "9e9c4bc0aa1678a2835ee6c579d766ff920533aa936fcf8255c76cd93bb02780",
+    "design.json": "fee0e324036e6101074a683bbd5d34b77a184f7ac8c32efa1f86a21b068d5623",
+    "research-note.md": "c21439293d6183466a2adf05a3499e16cc7fc5322b04f26f77d5c3447f01b256",
+    "results.json": "a56583981f180967d188f11a871d43e3933bb4c88c091d40dacbf07907c57815",
+    "solutions.npz": "d754086640edb67a96d51f0a004768211c53e0262b7ee51773aa9ac466f3dc61",
+    "timing-samples.csv": "e85ce6c5dd825dbc7002add19801dd68d4d71cf8ac978c56f91bf14bfe52852b"
+  }
+}

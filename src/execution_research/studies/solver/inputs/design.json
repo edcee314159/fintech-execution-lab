@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "base": {
+    "quantity": 100000,
+    "duration": 60,
+    "intervals": 60,
+    "price": 100,
+    "volatility": 0.03,
+    "impact": 0.00001,
+    "risk_aversion": 0.00001,
+    "trials": 200,
+    "seed": 20261009
+  },
+  "benchmark_intervals": [
+    10,
+    30,
+    60,
+    100,
+    300,
+    600,
+    1000
+  ],
+  "accuracy_intervals": [
+    1,
+    2,
+    10,
+    60,
+    300,
+    1000
+  ],
+  "accuracy_risk_aversions": [
+    0,
+    1e-10,
+    0.00001,
+    0.01,
+    1
+  ],
+  "accuracy_extra_cases": [
+    {
+      "name": "zero_volatility",
+      "changes": {
+        "intervals": 60,
+        "volatility": 0
+      }
+    },
+    {
+      "name": "strong_coefficient",
+      "changes": {
+        "intervals": 1000,
+        "risk_aversion": 10000,
+        "volatility": 1,
+        "impact": 1e-12
+      }
+    },
+    {
+      "name": "large_order",
+      "changes": {
+        "intervals": 1000,
+        "quantity": 10000000
+      }
+    }
+  ],
+  "timing": {
+    "repeats": 9,
+    "warmup_calls": 3,
+    "min_batch_seconds": 0.02,
+    "max_loops": 4096,
+    "order_seed": 20261009,
+    "requested_blas_threads": 1,
+    "gc": "timeit disables Python cyclic garbage collection within each timed batch"
+  },
+  "acceptance": {
+    "normalized_inventory_max_error": 1e-8,
+    "relative_objective_error": 1e-8,
+    "normalized_backward_error": 1e-10
+  },
+  "policy": "Prespecified sizes, precision cases and timing procedure. Keep all timings. Calibrate loops to the same minimum batch duration; deterministic shuffled method order. No claims that timings reproduce byte-for-byte or that a finite-size fit proves asymptotic complexity.",
+  "memory": "Report actual input-array storage bytes and RHS storage separately; not peak process RAM or native workspace."
+}

@@ -1,0 +1,17 @@
+{
+  "sha256": {
+    "01-historical-prices.png": "88642137e4d75fdb6e214bbdb49081677a29300759142ad57b92f480ff83c4db",
+    "02-volatility-history.png": "f5cf88aec1987cdd9b7d09b49108b9d7be2c13bbbd7d360ebeb712a5d3ba39f0",
+    "03-holdout-diagnostics.png": "c7bdcc42a24d4af2a87c9e90bbec1e0eac8cad6bb09cb20bd49f9eeed9e26168",
+    "04-model-integration.png": "a585dcb520409d552124694176a5977856a231054b75b3c2b2c8cdb9e0c7e350",
+    "05-time-units.png": "0e7b95655bd6ea8fa25466fc012a598d98aeb5a40bfb7e87bb9eebd6e74b27f1",
+    "clean-prices.csv": "b124cca01613d19c0f8c6ec3c5c6ebe0a1f1f3bcc848eb9b4d856fe3d11ec47e",
+    "cleaning-audit.json": "e77968db2b77ebe65cf8e9ce895f91976ca3f7911a3f9943a254383dc0776104",
+    "forecast-records.csv": "4dfa734a6e2d756aef84987b411550dd0d4c1d7c9cce9fa999adf1e6c6ac95f1",
+    "forecast-summary.csv": "148d28a53ff7bbd3bee6adb767009c6b3f784c870a171da6804528788f608214",
+    "inventories.npz": "f810165ec6e52c7c71fdc99f6d55202824559fe44622a4e6c4c16d388ce79a48",
+    "research-note.md": "9de2fc91c4ee1b5537eccce8b11b671e75d42fc6c8c7fbd182219e3e9cbbb069",
+    "results.json": "577c6e4e0aa57c759d684bb0adf8e79282739c6c75c5849e28a36358327347a1",
+    "returns.csv": "421a8edc53bd74336a1ba6397c3e4dee0aba46f8b41913bd83bd1c6565109f48"
+  }
+}

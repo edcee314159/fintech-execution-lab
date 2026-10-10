@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "sha256": {
+    "results.json": "0773efda86c3cd87d5f02a8af07cbb025cf4c9fbdb1415be6479234243a7043f",
+    "metrics.csv": "aebde08ba02779ef29abd8c3a053282e1c792d6875a71a8cc1b97d14288d3499",
+    "study-note.md": "963c7d2959994a5e4b958d64e6aa51ab4bfda78995db3c954d0af23274ec8b54",
+    "schedule.png": "ce2b4c634c1a69001b3336f945e9766801b89ef7eb97f2c5478ae7069af4323e",
+    "cost-distribution.png": "b75077a80796cef0f50c4202109daae92ff6be307b5c2c37c06ebcf372a7279b",
+    "paired-difference.png": "1bd735db59eced423837dec478fdda3a76204cee43bad6ef46a693a81c0f6013"
+  }
+}

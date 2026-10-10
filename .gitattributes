@@ -1,0 +1,2 @@
+# Preserve byte identity for frozen inputs, research manifests and source digests.
+* -text

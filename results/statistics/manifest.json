@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "01-monte-carlo-convergence.png": "1dba2908f65d3f73cef249e77703258c052125bed9ea51d9783143e7c699b60b",
+    "02-interval-coverage.png": "469b959d839122396722299fec0688173ca2b91aa555778b25422040b3dee248",
+    "03-all-seed-paired-intervals.png": "58565ae1659a7dbc1d1641fe5a6b2f0dcfef160578f6e353454a8a91a519aee6",
+    "04-pairing-and-precision.png": "4593a7f7b6aa07024b733fb6c670deeab572969f92922f740a9140cb0cf95308",
+    "aggregate-metrics.csv": "faa343f69b8e584fa89a85b6ebaa412511827a4c190ee959a2533ceba5e91ffc",
+    "batch-metrics.csv": "4a602adec3a6728253b9afd03a73f5e81ce5ab59ef33dbb3594d949ac90b7330",
+    "design.json": "0607b8a7311905d5535a230a437317509c8266ff31eb2d85edc0f96116776630",
+    "raw-costs.npz": "16516860987e9d378408d84bc41b6e6f4ba1558a12e6f1e61d9ec82e555fa1b4",
+    "research-note.md": "05574719b150666383a4b8a7ecd7c45332a697ef7df46132efca02eeb755ccc8",
+    "results.json": "2986c5f67e2705ebbb9d40a56294e0d02bacde013511022b6200c14f09c0e4db"
+  }
+}

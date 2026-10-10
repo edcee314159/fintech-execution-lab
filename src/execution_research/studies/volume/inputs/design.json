@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "base": {
+    "quantity": 100000,
+    "duration": 60,
+    "intervals": 60,
+    "price": 100,
+    "volatility": 0.03,
+    "impact": 0.00001,
+    "risk_aversion": 0.00001,
+    "trials": 2000,
+    "seed": 20261009
+  },
+  "profiles": [
+    "flat",
+    "u_shape",
+    "front_loaded",
+    "back_loaded",
+    "midday_peak"
+  ],
+  "risk_aversions": [
+    0,
+    0.00001,
+    0.0001
+  ],
+  "impact_models": [
+    "constant",
+    "inverse_expected_volume"
+  ],
+  "benchmark_volume_cases": [
+    "matched",
+    "shifted"
+  ],
+  "shift_fraction": 0.25,
+  "rounding": "Reuse deterministic largest-remainder integerization; continuous optimum retained as lower bound, not integer optimality.",
+  "prices": "One shared exogenous Gaussian innovation matrix for all cases and all strategies; same minute-start reference prices.",
+  "volume": "Five positive synthetic forecast curves known before execution. Matched or circularly shifted realized weights used only for VWAP evaluation.",
+  "impact": "constant: a_k=eta/tau. secondary assumption: a_k=eta/(tau*N*vhat_k), fixed at design time; not fitted from data and not recomputed from realized VWAP weights.",
+  "benchmarks": "Sell cost: Q*arrival_price-proceeds; separately Q*market_VWAP-proceeds, where market_VWAP uses external interval-start prices and exogenous volume weights.",
+  "inference": "95% Student-t CIs for Monte Carlo mean shortfall and paired mean differences only when all three schedules and reference prices are valid. Retain all invalid paths; no conditional-selection superiority claims.",
+  "limits": "No order book, participation caps, volume forecast learning, broker algorithm replication, real traded-VWAP data or live execution."
+}

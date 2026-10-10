@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "release": "0.3.1",
+  "verification_date": "2026-10-11",
+  "environment": "Windows/Python3.12.10",
+  "installed_regression_tests": 188,
+  "verified_smoke_studies": 8,
+  "installed_source_and_design_files": 54,
+  "real_volume": {
+    "forecasts": 30,
+    "records": 270,
+    "planned": 264,
+    "completed_replay": 229,
+    "public_arrays_identical": 792,
+    "records_equal_saved_evidence": true
+  },
+  "preserved_numeric_and_figure_files": 65,
+  "model_source_digest_sha256": "0eab9ba5bf9201a7d456430c02a5a293236473c4f9c7f046e94043ef58ab36c1"
+}

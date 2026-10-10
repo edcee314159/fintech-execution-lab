@@ -1,0 +1,25 @@
+asset,method,period,observations,msfe_over_forecast_variance,empirical_normal_95_coverage,mean_qlike,zero_variance_forecasts,interpretation
+GBPUSD,rolling_120,all,511,0.7922955721585995,0.949119373776908,-9.808052594915612,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_120,2024,256,0.7246038520664688,0.95703125,-10.05616180515574,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_120,2025,255,0.8386551344763481,0.9411764705882353,-9.558970407380425,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_20,all,511,0.8563368017918649,0.9295499021526419,-9.605378671345433,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_20,2024,256,0.8608562264976793,0.9296875,-9.853628808436074,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_20,2025,255,0.8536027182125885,0.9294117647058824,-9.356155004305416,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_60,all,511,0.8178131634048924,0.9432485322896281,-9.820041808392117,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_60,2024,256,0.7839978774245262,0.9453125,-10.059463902293107,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,rolling_60,2025,255,0.8394880241920658,0.9411764705882353,-9.579680804318967,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,static_training,all,511,0.3571310306589297,0.9843444227005871,-9.550602172193035,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,static_training,2024,256,0.26102617092771807,0.9921875,-9.656949710480763,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+GBPUSD,static_training,2025,255,0.4540257933468362,0.9764705882352941,-9.44383758473555,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_120,all,511,0.8485207232421339,0.9452054794520548,-13.638347559385009,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_120,2024,256,0.8665639070872353,0.94921875,-14.307352163123989,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_120,2025,255,0.8402523180767284,0.9411764705882353,-12.966719408180385,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_20,all,511,0.8263551366591018,0.9217221135029354,-12.622931262401677,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_20,2024,256,0.9431153095217464,0.921875,-14.30124839769217,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_20,2025,255,0.7793485162766155,0.9215686274509803,-10.938032491286513,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_60,all,511,0.8321197376951327,0.9334637964774951,-13.233059428630082,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_60,2024,256,0.8565231050470649,0.94921875,-14.310251858100994,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,rolling_60,2025,255,0.8209911089972474,0.9176470588235294,-12.151642715122025,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,static_training,all,511,1.2010075916855456,0.9412915851272016,-13.745526858575138,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,static_training,2024,256,0.7766415067617921,0.96875,-14.389944521058382,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.
+HKDUSD,static_training,2025,255,1.6288616170333297,0.9137254901960784,-13.098582068003726,0,Descriptive chronological holdout diagnostics; no independent-observation CI claimed.

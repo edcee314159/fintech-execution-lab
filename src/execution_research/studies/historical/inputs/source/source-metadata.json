@@ -1,0 +1,21 @@
+{
+  "provider": "European Central Bank",
+  "source_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip",
+  "resolved_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip",
+  "retrieved_utc": "2026-10-09T03:18:44.401512+00:00",
+  "archive_bytes": 640802,
+  "archive_sha256": "44af7b15650b71fa76e45cacfcf3ec1a30a7eb4562e68414acead2c5c7d11064",
+  "member": "eurofxref-hist.csv",
+  "member_sha256": "2e5e5708a56c8bb7f510e742e20062c921634d7f27ba7f290a0979bae07f7d6e",
+  "response_metadata": {
+    "Date": "Fri, 09 Oct 2026 03:18:40 GMT",
+    "Content-Type": "application/zip",
+    "ETag": null,
+    "Last-Modified": "Thu, 08 Oct 2026 13:56:21 GMT"
+  },
+  "snapshot_type": "current historical snapshot; not a point-in-time vintage",
+  "copyright_url": "https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html",
+  "methodology_url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+  "transformation_notice": "Derived cross-rates, sorted/filtered study subset, log returns and volatility statistics are researcher modifications. Original archive bytes are unmodified.",
+  "reference_rate_limit": "Reference rates are for information purposes; not actual executable transaction quotes."
+}

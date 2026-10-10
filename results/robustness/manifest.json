@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "01-objective-loss-heatmaps.png": "98c9289a075dd55e5b938137327daac96e649e7c783a50ee9ac971d84b06150d",
+    "02-true-cost-risk.png": "9acf835da1fbf802c6e6080dcd1dfebd38fba7b439803e80010d27f72cea7220",
+    "03-forecast-miscalibration.png": "e748530e82801ada5deb9f7d6afe8465cab00142c6371ebc6095a54b3664e60c",
+    "04-grid-loss-by-market.png": "84a0bf40e8cf8a869f0a205ed9881fee0def78b1c22158c618273cfcacbd30e4",
+    "05-cancellation-not-calibration.png": "9d31b25ca103f305e6ae9163bf6d73415987af5da9d51cf75f791db07b84bd46",
+    "design.json": "783c1c6f70185f2fd02e087ee591d82ae1a769d9b6e076e8047d559c5d250850",
+    "metrics.csv": "cf4d89c64b04649a0196492b992e1ac4c2fd0c1d6fd2b39e7fd1d259f366be20",
+    "raw-paths.npz": "b0252cc84abd56d85dad03f059ccdb8343786d925551cde3239f9fcfa1ecc232",
+    "research-note.md": "eddd74f920ea5fb83ba85de9c2433a3b44a40550074f1105a79d5ccb81be40be",
+    "results.json": "50e93ed4ce6f181b2365197e289f08cb11af9a3c166fc49150000e9ab5f73c9a"
+  }
+}

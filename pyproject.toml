@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trade-execution-lab"
+version = "0.3.1"
+description = "Execution-cost research with optimization, simulation and historical volume validation"
+requires-python = ">=3.12,<3.13"
+dependencies = ["numpy==2.3.5", "scipy==1.16.3", "matplotlib==3.10.7"]
+readme = "README.md"
+
+[project.scripts]
+execution-volume-validate = "execution_volume_validation.cli:main"
+execution-lab = "execution_lab.cli:main"
+execution-lab-research = "execution_research.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+execution_research = ["inputs/*.json"]
+"*" = ["inputs/*.json", "inputs/source/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

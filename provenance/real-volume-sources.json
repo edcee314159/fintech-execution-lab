@@ -1,0 +1,29 @@
+{
+  "SPY": {
+    "url": "https://x01.frd-data.com/firstratedata_sample_SPY.zip",
+    "archive_sha256": "3d11b9aad0c388ada75af58bc6a57f67febb8b08be178b2c6e2bd1f5cb33569a",
+    "csv_sha256": "8be8bad5447612e69461c1783ae8c825000c9490f62a6e6d786916613f9aef9e",
+    "csv_member": "SPY_1min.csv",
+    "archive_bytes": 148297,
+    "rows": 8784,
+    "first": "2026-09-21 04:00:00",
+    "last": "2026-10-02 19:59:00"
+  },
+  "AAPL": {
+    "url": "https://x01.frd-data.com/firstratedata_sample_AAPL.zip",
+    "archive_sha256": "f4628ef5ede8816c5ac430293fd312ff84a3491e35ca390ea8391e6a8a9ed573",
+    "csv_sha256": "eea6f93b0230cbf72c8cd8adb3bca84f008c81406b3e1963a03b9ff20307f1fd",
+    "csv_member": "AAPL_1min.csv",
+    "archive_bytes": 138829,
+    "rows": 8167,
+    "first": "2026-09-21 04:00:00",
+    "last": "2026-10-02 19:59:00"
+  },
+  "_notice": {
+    "access_date": "2026-10-09",
+    "raw_data_redistribution": false,
+    "source": "FirstRate Data",
+    "license_url": "https://firstratedata.com/about/license",
+    "faq_url": "https://firstratedata.com/about/FAQ"
+  }
+}

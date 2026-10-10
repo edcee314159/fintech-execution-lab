@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "base": {
+    "quantity": 100000,
+    "duration": 60,
+    "intervals": 60,
+    "price": 100,
+    "volatility": 0.03,
+    "impact": 0.00001,
+    "risk_aversion": 0.00001,
+    "trials": 2000,
+    "seed": 20261009
+  },
+  "risk_aversions": [
+    0,
+    1e-7,
+    3e-7,
+    0.000001,
+    0.000003,
+    0.00001,
+    0.00003,
+    0.0001,
+    0.0003,
+    0.001
+  ],
+  "scenarios": [
+    {
+      "name": "baseline",
+      "changes": {}
+    },
+    {
+      "name": "volatility_low",
+      "changes": {
+        "volatility": 0.015
+      }
+    },
+    {
+      "name": "volatility_high",
+      "changes": {
+        "volatility": 0.06
+      }
+    },
+    {
+      "name": "impact_low",
+      "changes": {
+        "impact": 0.000005
+      }
+    },
+    {
+      "name": "impact_high",
+      "changes": {
+        "impact": 0.00002
+      }
+    }
+  ],
+  "scaling_cases": [
+    {
+      "name": "scaling_baseline",
+      "changes": {}
+    },
+    {
+      "name": "scaling_double_volatility",
+      "changes": {
+        "volatility": 0.06,
+        "risk_aversion": 0.0000025
+      }
+    },
+    {
+      "name": "scaling_double_impact",
+      "changes": {
+        "impact": 0.00002,
+        "risk_aversion": 0.00002
+      }
+    }
+  ],
+  "sampling": "One shared bank of 2000 independent standardized Gaussian paths; correlated conditions. Main grid fixed before execution. Scaling baseline reuses the main baseline case."
+}

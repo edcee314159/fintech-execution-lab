@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "base": {
+    "quantity": 100000,
+    "duration": 60,
+    "intervals": 60,
+    "price": 100,
+    "volatility": 0.03,
+    "impact": 0.00001,
+    "risk_aversion": 0.00001,
+    "trials": 2000,
+    "seed": 20261009
+  },
+  "profiles": [
+    "flat",
+    "u_shape",
+    "front_loaded",
+    "back_loaded",
+    "midday_peak"
+  ],
+  "risk_aversions": [
+    0,
+    0.00001,
+    0.0001
+  ],
+  "scenarios": [
+    {
+      "name": "capacity_shortage",
+      "market_volume": 600000,
+      "participation_rate": 0.1
+    },
+    {
+      "name": "integer_shortage",
+      "market_volume": 1000000,
+      "participation_rate": 0.1
+    },
+    {
+      "name": "near_capacity",
+      "market_volume": 1000600,
+      "participation_rate": 0.1
+    },
+    {
+      "name": "moderate_capacity",
+      "market_volume": 1200000,
+      "participation_rate": 0.1
+    },
+    {
+      "name": "loose_capacity",
+      "market_volume": 30000000,
+      "participation_rate": 0.1
+    }
+  ],
+  "model": "Original constant temporary impact; deterministic external-volume quotas known at planning time.",
+  "quota": "q_k <= floor(rho*V_k), decimal input semantics; V excludes the seller's own trades.",
+  "benchmark": "Arrival shortfall, paired on the same external Gaussian price innovations.",
+  "failure": "Report continuous or integer capacity shortage and maximal possible shares; no fabricated completion or comparison of incomplete costs.",
+  "limits": "Forecast capacity is not guaranteed actual liquidity; no real order book, partial fills, live trading or endogenous market volume."
+}

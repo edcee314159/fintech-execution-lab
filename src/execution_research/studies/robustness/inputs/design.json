@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "base_true": {
+    "quantity": 100000,
+    "duration": 60,
+    "intervals": 60,
+    "price": 100,
+    "volatility": 0.03,
+    "impact": 0.00001,
+    "risk_aversion": 0.00001,
+    "trials": 2000,
+    "seed": 20261009
+  },
+  "risk_aversions": [
+    0.000001,
+    0.00001,
+    0.0001
+  ],
+  "sigma_ratios": [
+    0.5,
+    1,
+    2
+  ],
+  "impact_ratios": [
+    0.5,
+    1,
+    2
+  ],
+  "true_scenarios": [
+    {
+      "name": "baseline",
+      "changes": {}
+    },
+    {
+      "name": "volatility_low",
+      "changes": {
+        "volatility": 0.015
+      }
+    },
+    {
+      "name": "volatility_high",
+      "changes": {
+        "volatility": 0.06
+      }
+    },
+    {
+      "name": "impact_low",
+      "changes": {
+        "impact": 0.000005
+      }
+    },
+    {
+      "name": "impact_high",
+      "changes": {
+        "impact": 0.00002
+      }
+    }
+  ],
+  "supplemental_cases": [
+    {
+      "name": "cancel_high",
+      "scenario": "baseline",
+      "risk_aversion": 0.00001,
+      "sigma_ratio": 2,
+      "impact_ratio": 4
+    },
+    {
+      "name": "cancel_low",
+      "scenario": "baseline",
+      "risk_aversion": 0.00001,
+      "sigma_ratio": 0.5,
+      "impact_ratio": 0.25
+    }
+  ],
+  "policy": "Known fixed risk preference. Build schedules with estimated sigma/eta; evaluate every schedule with true sigma/eta. No parameter fitted to data. No post-result design changes.",
+  "sampling": "2000 independent standardized Gaussian paths shared across every condition; repeated conditions are correlated."
+}

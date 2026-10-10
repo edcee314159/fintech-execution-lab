@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "01-execution-profiles.png": "d50da925d5a0e41a2422072e5cc22f7fd64f93251361ba8547d3ac5c293b0bf5",
+    "02-cost-risk-frontier.png": "0e0a5421ea5c99ed3497e9946dc5a038c771db403d01afbec6354cacc7f2b05f",
+    "03-parameter-frontiers.png": "99f8adf275d2385e304cbbc4776746bf73b8f525830139fdd4c2b13a21aef23d",
+    "04-urgency-and-monte-carlo.png": "4e107f65b2963c32956295023f7e9f5d5d897a092c4bb458dd7b75a7f3b33978",
+    "05-dimensionless-scaling.png": "6d3f7032b57c72cdfac29eec78865fd1c0f267d7961a0f2d56043a5f90061e79",
+    "design.json": "8cf3beefd54da1c2c9a3dbdbf60168d30a5480cd7727f6f50fe552bc26c735f4",
+    "metrics.csv": "005e5f9b10d47f5e8263883a5c22620f5735af5ad573070b7a888f17260d2113",
+    "raw-paths.npz": "d377245e8a1293e37856acd8374c7e6b8d6ee66edab13b783ce7f0e87e1c2e77",
+    "research-note.md": "99efb74a8909f70331a9f005f3392bb577eeacf6629ffa1509f9cc42fccd58f9",
+    "results.json": "ef3237550b3604e7e771480ab95ba2852722c228ac1cb8f9e2f8458b08e734b5"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "01-volume-profiles.png": "b591cb62a9bf54571dbecaebfaa2bb7b2f21dec97e2c5ece19455dd6ce5c4652",
+    "02-inventory-plans.png": "99eba13967bfefcdfacff2363408a88355c07ee8536fd2aa308617d1046134b7",
+    "03-arrival-objective.png": "b64a7a51bef792e783fa03d767b1292c7ecd137a14079719140f6d65d5b4ef00",
+    "04-tracking-risk.png": "cd8ba8a3c8c88bfaa003225c0d84d0ebf14db8e95818fe36369cf412df483e97",
+    "05-paired-comparisons.png": "14b11181347950bc7152824aafcaea7dd4457dc413fb924cb06113e4ab83d478",
+    "paired-metrics.csv": "ff0782653989995a994be46e07e658042fcebca0c0c6e025e07c71f43497f853",
+    "paths-and-schedules.npz": "4de72799cc65fdbb5168a630f3c5ca219f808aab504e4b4683b8c26027595b42",
+    "research-note.md": "b54738f7b0f8859b5532fae8c58be78d59f3533c421c5f11fd19508070b754ce",
+    "results.json": "ce89660b345ef57335bff5dc5169db5b04f77a99013e8a9bd61ed0ef349f35bf",
+    "strategy-metrics.csv": "7435cb9ffe92049319dc04470d581f3330d45e06695a316280bfc790e25a652f"
+  }
+}

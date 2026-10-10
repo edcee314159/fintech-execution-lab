@@ -1,0 +1,15 @@
+{
+  "sha256": {
+    "01-capacity-feasibility.png": "b67da236ef501a8bfcb83b7cd10779775a4a21ef00a5d81a0a0f003257e273b9",
+    "02-constrained-plans.png": "51fc9972a431c7c77c97eaa77173e6a56e0adcccb7e91231f0bf0c98727161e3",
+    "03-arrival-objectives.png": "d2c8c9760ae680c962c147fafa26d59c4789b69e363414d4360deb997235e161",
+    "04-optimality-certificates.png": "b20c74cf114270aa51401be54e27c70123259496a83749613e8516ae31fc36d0",
+    "05-paired-costs.png": "4205af260a02cd76ff47cac2df207c47f72f5b3d968a3f0fd64f3363aa899f54",
+    "capacity-diagnostics.csv": "613287f870c1c75469706c066ccdc3a434f1c5b2b6093b535a7d1865320749d0",
+    "paired-metrics.csv": "dc363f260b08b149fa4479393f7513a8bda8f9018ce66503cec78f586535bbae",
+    "paths-and-schedules.npz": "abd2558bde5c1da14fc1f6ea2debf0906559a431d5b8b9d3715b8543db2376b5",
+    "research-note.md": "12a55729623507d93be0bacfa9bb56778c49c4934c3fbcd5ff6907ec0e138f81",
+    "results.json": "08b7d19ec1f3f45ade18352789e38597d32372d15e1065bd74249a07ca4ed3b1",
+    "strategy-metrics.csv": "89795367b0754bac5b0c6f695edac28070068cb8a198d8d77fd58f0cff2df7e5"
+  }
+}

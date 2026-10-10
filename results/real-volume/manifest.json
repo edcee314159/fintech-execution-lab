@@ -1,0 +1,9 @@
+{
+  "research_scope": "Frozen full pilot; not smoke",
+  "design_sha256": "11ffc9cafe97e70f47c21e1ee742a57aaeb3d59dadd45dbe946853cf1ea04424",
+  "public_files": {
+    "results.json": "76963f116f2c2f78e49345e42f755cb702a49a37d98e87eba7e2f704e0b7992a",
+    "derived-schedules.npz": "f895dcfc2870bef2145d2e2cb622a926b5a12c64653bd10aa0a3d6ab128e0f67"
+  },
+  "private_arrays_excluded_from_distribution": true
+}
