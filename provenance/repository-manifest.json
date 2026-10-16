@@ -16,7 +16,7 @@
     "provenance/real-volume-sources.json": "67373fddd3d25b36e09e17431f3b54f058a841fe473ec30ab9ecb040dfbfacbc",
     "provenance/release-verification.json": "f96eeab5ec435b20a75e577a11210dbda494ab559497086bef0517177e7ec967",
     "pyproject.toml": "b427a155dabf7e0381966fd2388cb3f8ef712df9b062ba218e8654bd63ebeb7c",
-    "README.md": "9f0f5a087e5e9d9adc4525193f634f6b07dc717e13065ec6b167dc2e7d3e400e",
+    "README.md": "42f3f8e273867d49af11f5405903582afcd98500a30aa53516951d48e3323b0e",
     "requirements.lock": "ad594480e17dec767a6c7f54f078846053b07d52007bb807a24ded4ac032d294",
     "results/core/cost-distribution.png": "b75077a80796cef0f50c4202109daae92ff6be307b5c2c37c06ebcf372a7279b",
     "results/core/manifest.json": "7264c8e67052743ed2000f8f779851cd609645b4ec3ea7c7abc17edab97edf14",
@@ -181,6 +181,7 @@
     "tests/studies/test_volume_benchmark.py": "d87c832dba5acd4ba0fc8a77d1339d62ee2dbe06611ee643d1c317a6c1cf99b0",
     "tests/test_cli_export.py": "628a70f6bddb27c3a2de64c294038d451b998df63bc76c304a70287bac1ac98e",
     "tests/test_config.py": "55da412a9fc9038f00e2f588c4bcd424afa813f8af74fd2995bd8d1ef54bd693",
+    "tests/test_dashboard.py": "ee1e6ff170f056bf44bb07664a8732ec1a963d7fb0a89cf57deed5c013b8d6c4",
     "tests/test_metrics.py": "449c0d84e6892d7c5f33341a0c9927f68166b35812ac3b11ffce9a772e6c6b28",
     "tests/test_plotting.py": "e6cae57222d68c18b42efb36417b439b57f55d9e80d12e2e8f90e3ae920fd675",
     "tests/test_real_volume.py": "ad7156f5d1c976155c8ae0e710d887fb57b971a32939ac9c160094e488ac9bbf",
@@ -190,6 +191,8 @@
     "tests/test_tool_safety.py": "59ee4255683630a617854b50719d48c2ac72bdaafe8e796f3cb706278523f338",
     "tests/test_unified.py": "28f252a66e2449e56b6af13fe6c3de9c26bc626090304e035bdb6166b02d656d",
     "tools/bootstrap.py": "b8dfd6248317ee114fdaf9e135b04f3345a4e8965ae93d3452ac120b51e9dd7b",
-    "tools/check.py": "264bfe29cc5386dd19889523211108cfae17fb4655581453f465c85b6f9ebcb4"
+    "tools/check.py": "264bfe29cc5386dd19889523211108cfae17fb4655581453f465c85b6f9ebcb4",
+    "tools/dashboard.html": "0f5f86a5f86f47a208925da72c7949499e96785395170208214af22d84134777",
+    "tools/dashboard.py": "73c11fa33681cc83026925ebe6b53b84275dd5b171a7773506df8a62ad2a63b6"
   }
 }
