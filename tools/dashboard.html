@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>拆单实验室 · 交互实验面板</title>
 <style>
 :root{font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:#173536;background:#f3f6f4;--green:#176b60;--orange:#cf772d;--muted:#617471}*{box-sizing:border-box}body{margin:0}header{background:#123d37;color:white;padding:30px max(24px,calc((100vw - 1280px)/2));border-bottom:5px solid #c0d7a5}header small{color:#b8d8c8;letter-spacing:3px}h1{font-size:30px;margin:10px 0}header p{max-width:760px;line-height:1.8;color:#dbe8df;margin:0}main{max-width:1328px;margin:auto;padding:26px 24px;display:grid;grid-template-columns:310px 1fr;gap:24px}.panel,.chart,.metrics,.intro{background:white;border:1px solid #dfe7e2;border-radius:14px;padding:22px}.panel{align-self:start}.panel h2{font-size:18px;margin:0 0 18px}.fields{display:grid;gap:13px}label{font-size:13px;font-weight:600;display:block}input,select{width:100%;background:#fafcfb;border:1px solid #c8d7ce;border-radius:7px;padding:10px;margin:5px 0 2px;font:inherit;color:#173536}input:focus,select:focus,button:focus-visible{outline:3px solid #a0c9b0;outline-offset:2px}.help{font-size:11px;line-height:1.5;color:var(--muted)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}button{cursor:pointer;border:0;border-radius:7px;padding:11px 14px;font:inherit;font-size:13px;background:#eaf0eb;color:#173536}button.primary{width:100%;background:var(--green);color:white;margin-top:18px;font-weight:600}button:disabled{opacity:.5;cursor:wait}.secondary{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.right{min-width:0}.intro{padding:20px;margin-bottom:18px;line-height:1.8;font-size:14px}.intro p{margin:0}.badge{display:inline-block;border-radius:20px;background:#eaf3ec;color:var(--green);padding:4px 10px;font-size:12px;margin-bottom:10px}.status{font-size:13px;margin:12px 0;line-height:1.7;color:var(--muted)}.status.error,.notice.warn{color:#924b20;background:#fff3e7}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.card{background:white;border:1px solid #dfe7e2;border-radius:12px;padding:18px}.card small{color:var(--muted);font-size:12px}.value{font-size:25px;line-height:1.4;font-weight:650;margin:7px 0 3px}.card p{font-size:11px;color:var(--muted);margin:0}.chart{margin-bottom:18px}h2{font-size:16px;margin:0 0 8px}.subtitle{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 12px}.legend{font-size:12px;display:flex;gap:18px;margin:10px 0}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.twap{background:var(--orange)}.ac{background:var(--green)}svg{width:100%;height:auto;display:block}.placeholder{padding:70px 20px;text-align:center;color:var(--muted);font-size:14px;border-top:1px dashed #dbe4dc}.metrics{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}th,td{text-align:right;padding:13px 10px;border-bottom:1px solid #e7ede8}th:first-child,td:first-child{text-align:left}th{font-size:12px;color:var(--muted);font-weight:500}.notice{font-size:12px;padding:13px;background:#eaf0eb;border-radius:7px;line-height:1.8;margin-top:16px}details{font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px}footer{font-size:12px;color:var(--muted);padding:18px 0;line-height:1.8}#results[hidden]{display:none}a{color:var(--green)}@media(max-width:920px){main{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,1fr)}.panel{padding:18px}}@media(max-width:560px){header{padding:24px}main{padding:16px}.fields{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.value{font-size:22px}h1{font-size:25px}}
-</style></head><body>
+.replay-filters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.replay-cards{grid-template-columns:repeat(4,1fr);margin:16px 0}.replay-cards .value{font-size:20px}.replay-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}#replay-slider{padding:0;accent-color:#176b60}#replay-message{min-height:58px}.replay-box{margin-top:20px}#replay a{color:#176b60}@media(max-width:700px){.replay-filters,.replay-cards{grid-template-columns:repeat(2,1fr)}} </style></head><body>
 <header><small>FINTECH EXECUTION LAB</small><h1>拆单实验室</h1><p>一大笔股票，怎样分批卖出？调整参数，比较“每次卖一样多”和“权衡成本与风险”的两种计划。</p></header>
 <main><aside class="panel"><h2>01 / 设置实验</h2><form id="form"><div class="fields">
 <label>计划卖出数量 · 股<input name="quantity" type="number" min="1" max="10000000" step="1" value="100000" required></label>
@@ -19,12 +19,41 @@
 <div class="chart"><h2>每个时段卖多少</h2><p class="subtitle">横轴为各时段起点（分钟），纵轴为该时段计划卖出股数。</p><div class="legend"><span><i class="dot twap"></i>均匀卖出</span><span><i class="dot ac"></i>模型拆单</span></div><div id="schedule"></div></div>
 <div class="chart"><h2>还有多少股票没卖出</h2><p class="subtitle">横轴为时间（分钟），纵轴为计划剩余股数。两条计划都要求在结束时卖完。</p><div class="legend"><span><i class="dot twap"></i>均匀卖出</span><span><i class="dot ac"></i>模型拆单</span></div><div id="inventory"></div></div>
 <div class="metrics"><h2>03 / 比较成本与风险</h2><p class="subtitle" id="runmeta"></p><table><thead><tr><th>指标</th><th>均匀卖出</th><th>模型拆单</th></tr></thead><tbody id="table"></tbody></table><div id="validity" class="notice"></div><details><summary>这些指标分别是什么意思？</summary>理论平均成本与标准差由模型公式计算。模拟平均成本来自随机价格路径。95% 区间衡量模拟平均值的估计误差，不是某次交易成本的预测区间。风险权衡目标 = 理论平均成本 + 风险权重 × 理论成本方差；整数拆单为近似方案，不保证全局最优。</details><div class="secondary"><button id="json" type="button">下载本次结果 JSON</button><button id="csv" type="button">下载拆单计划 CSV</button></div></div>
-</div><footer>基础模型假设计划全部成交，不检查真实市场容量，也不模拟手续费、买卖价差或排队。本页不构成实际成交或盈利证明。实验结果自动保存在启动命令指定的外部目录。</footer></section></main>
+</div>
+<section id="replay" class="chart replay-box" aria-labelledby="replay-heading">
+<h2 id="replay-heading">04 / 历史成交过程回放</h2>
+<p class="subtitle">读取已保存的 SPY、AAPL 历史实验：270 条情形中，229 条回放完成、35 条仍有剩余、6 条未生成计划。这里与左侧基础模拟分开，左侧参数不会改变历史结果。</p>
+<p class="subtitle">默认选择一个未完成的例子，便于观察积压；可切换全部情形。成交量限制下的“模拟完成”不代表真实交易所成交。</p>
+<div class="replay-filters">
+<label>历史标的<select id="replay-symbol" disabled></select></label>
+<label>历史日期<select id="replay-date" disabled></select></label>
+<label>成交量预测方法<select id="replay-predictor" disabled></select></label>
+<label>订单 / 过去平均日成交量<select id="replay-fraction" disabled></select></label>
+<label>拆单方法<select id="replay-planner" disabled></select></label>
+</div>
+<p id="replay-status" class="status" role="status" aria-live="polite">正在加载历史情形…</p>
+<div id="replay-content" hidden>
+<label for="replay-slider">推进交易日：<span id="replay-clock">开盘前 · 0 / 78 时段</span></label>
+<input id="replay-slider" type="range" min="0" max="78" step="1" value="0" aria-label="回放时间滑块">
+<div class="replay-controls"><button id="replay-play" type="button">播放</button><button id="replay-start" type="button">回到开盘</button><button id="replay-end" type="button">跳到收盘</button></div>
+<div class="cards replay-cards">
+<div class="card"><small>累计计划卖出 · 股</small><div class="value" id="replay-planned">0</div></div>
+<div class="card"><small>累计模拟完成 · 股</small><div class="value" id="replay-filled">0</div></div>
+<div class="card"><small>尚未卖出 · 股</small><div class="value" id="replay-remaining">0</div></div>
+<div class="card"><small>已到期未完成 · 股</small><div class="value" id="replay-backlog">0</div></div>
+</div>
+<div id="replay-message" class="notice" role="status" aria-live="polite"></div>
+<h2 style="margin-top:20px">计划进度与模拟完成进度</h2>
+<p class="subtitle">横轴为开盘后的分钟数，纵轴为累计股数。曲线仅显示滑块时点及之前的记录。</p>
+<div class="legend"><span><i class="dot twap"></i>累计计划卖出</span><span><i class="dot ac"></i>累计模拟完成</span></div><div id="replay-chart"></div>
+<details><summary>积压与剩余有什么区别？</summary>剩余股数是整笔订单尚未卖出的数量；积压股数只计算已经按计划应卖出、却还没有完成的部分。回放把未完成数量顺延到后续时段，不能借用之前错过的成交容量。市场成交量在事后才完整可知，因此这项回放是历史容量检查，不能证明实盘一定能成交。</details>
+</div></section>
+<footer>基础模型假设计划全部成交，不检查真实市场容量，也不模拟手续费、买卖价差或排队。本页不构成实际成交或盈利证明。实验结果自动保存在启动命令指定的外部目录。</footer></section></main>
 <script>
 'use strict';
 const form=document.querySelector('#form'),status=document.querySelector('#status');let current=null;
 const names=['twap','ac_simplified'],fmt=v=>v==null?'—':Number(v).toLocaleString('zh-CN',{maximumFractionDigits:2});
-function chart(target,series,times,title){const W=760,H=220,L=65,R=18,T=14,B=35,xmax=times.at(-1)||1,ymax=Math.max(1,...series.flat()),x=t=>L+t/xmax*(W-L-R),y=v=>H-B-v/ymax*(H-T-B);let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}">`;
+function chart(target,series,times,title,limits={}){const W=760,H=220,L=65,R=18,T=14,B=35,xmax=limits.xmax||(times.at(-1)||1),ymax=limits.ymax||Math.max(1,...series.flat()),x=t=>L+t/xmax*(W-L-R),y=v=>H-B-v/ymax*(H-T-B);let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}">`;
 for(let i=0;i<=4;i++){const v=ymax*i/4,yy=y(v);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#e4ece6"/><text x="${L-9}" y="${yy+4}" text-anchor="end" fill="#617471" font-size="11">${fmt(v)}</text>`;const t=xmax*i/4;s+=`<text x="${x(t)}" y="${H-10}" text-anchor="middle" fill="#617471" font-size="11">${fmt(t)}</text>`;}
 series.forEach((values,k)=>{const pts=values.map((v,i)=>`${x(times[i])},${y(v)}`).join(' ');s+=`<polyline points="${pts}" fill="none" stroke="${k?'#176b60':'#cf772d'}" stroke-width="2.5" ${k?'':'stroke-dasharray="6 4"'}/>`;if(values.length===1)s+=`<circle cx="${x(times[0])}" cy="${y(values[0])}" r="4" fill="${k?'#176b60':'#cf772d'}"/>`;});document.querySelector(target).innerHTML=s+'</svg>';}
 function show(r){current=r;const c=r.config,s=r.summary,rows=names.map(n=>s.strategies[n]);document.querySelector('#results').hidden=false;document.querySelector('#empty').hidden=true;document.querySelector('#quantity').textContent=fmt(c.quantity)+' 股';document.querySelector('#horizon').textContent=`${fmt(c.duration)} 分钟 · ${c.intervals} 个时段`;document.querySelector('#cost').textContent=fmt(rows[1].prediction.mean);document.querySelector('#risk').textContent=fmt(rows[1].prediction.std);const times=Array.from({length:c.intervals+1},(_,i)=>i*c.duration/c.intervals);chart('#schedule',names.map(n=>r.schedules[n].quantities),times.slice(0,-1),'每时段计划卖出股数');chart('#inventory',names.map(n=>r.schedules[n].inventory),times,'计划剩余股数');
@@ -35,4 +64,4 @@ function stale(){if(current){status.className='status';status.textContent='参�
 form.addEventListener('input',stale);form.addEventListener('reset',stale);
 function download(text,type,name){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 document.querySelector('#json').onclick=()=>{if(current)download(JSON.stringify(current,null,2),'application/json','execution-result.json');};document.querySelector('#csv').onclick=()=>{if(!current)return;const c=current.config,rows=['时段,起点分钟,终点分钟,均匀卖出股数,模型拆单股数'];for(let i=0;i<c.intervals;i++)rows.push([i+1,i*c.duration/c.intervals,(i+1)*c.duration/c.intervals,...names.map(n=>current.schedules[n].quantities[i])].join(','));download('\uFEFF'+rows.join('\r\n'),'text/csv;charset=utf-8','execution-schedule.csv');};
-</script></body></html>
+</script><script src="/replay.js" defer></script></body></html>

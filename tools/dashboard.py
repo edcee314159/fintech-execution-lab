@@ -5,6 +5,8 @@ from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import threading
 import uuid
+from urllib.parse import urlsplit, parse_qs
+import numpy as np
 
 from execution_lab.config import ExecutionConfig
 from execution_lab.schedule import make_twap, make_ac
@@ -23,6 +25,47 @@ def run_experiment(data):
             'schedules': {name: {'quantities': s.quantities.tolist(), 'inventory': s.inventory.tolist()}
                           for name, s in schedules.items()},
             'assumptions': '基础模型只研究卖单，假设计划全部成交；不验证真实成交量、排队或实盘收益。'}
+
+
+
+def replay_catalog():
+    root = Path(__file__).resolve().parents[1] / 'results' / 'real-volume'
+    data = json.loads((root / 'results.json').read_text(encoding='utf-8'))
+    cases = []
+    for r in data['records']:
+        case = {key: r[key] for key in ('id', 'symbol', 'date', 'predictor', 'planner', 'order_fraction_adv', 'quantity', 'planning_feasible')}
+        case.update(residual=r['replay']['residual'] if r['replay'] else None,
+                    complete=r['replay']['complete'] if r['replay'] else None,
+                    participation_rate=data['design']['participation_rate'])
+        cases.append(case)
+    return cases
+
+
+def replay_case(case_id):
+    # Resolve identifiers against the fixed catalog, never as user-supplied paths.
+    case = next((c for c in replay_catalog() if c['id'] == case_id), None)
+    if case is None:
+        raise ValueError('回放情形不存在。')
+    result = {'case': case, 'available': case['planning_feasible'], 'interval_minutes': 5}
+    if not result['available']:
+        return result
+    root = Path(__file__).resolve().parents[1] / 'results' / 'real-volume'
+    with np.load(root / 'derived-schedules.npz', allow_pickle=False) as data:
+        planned, fills, remaining = (data[case_id + '_' + key] for key in ('planned', 'fills', 'remaining'))
+    q = case['quantity']
+    if (planned.shape != (78,) or fills.shape != (78,) or remaining.shape != (79,)
+            or any(not np.issubdtype(a.dtype, np.integer) or np.any(a < 0) for a in (planned, fills, remaining))):
+        raise ValueError('已保存回放数组的格式或数量不正确。')
+    released = np.r_[0, np.cumsum(planned)]
+    executed = np.r_[0, np.cumsum(fills)]
+    backlog = released - executed
+    if (int(planned.sum()) != q or np.any(backlog < 0) or not np.array_equal(remaining, q - executed)
+            or int(remaining[-1]) != case['residual'] or (case['complete'] != (int(remaining[-1]) == 0))):
+        raise ValueError('已保存回放记录未通过数量核对。')
+    result.update(planned=planned.tolist(), fills=fills.tolist(), remaining=remaining.tolist(),
+                  cumulative_planned=released.tolist(), cumulative_filled=executed.tolist(),
+                  backlog=backlog.tolist(), capacity_limited=(backlog[1:] > 0).tolist())
+    return result
 
 
 def make_server(port, output):
@@ -57,8 +100,21 @@ def make_server(port, output):
             self.wfile.write(body)
 
         def do_GET(self):
-            if self.path == '/':
+            url = urlsplit(self.path)
+            if url.path == '/' and not url.query:
                 self.send(200, Path(__file__).with_name('dashboard.html').read_bytes(), 'text/html; charset=utf-8')
+            elif url.path == '/replay.js' and not url.query:
+                self.send(200, Path(__file__).with_name('replay.js').read_bytes(), 'text/javascript; charset=utf-8')
+            elif url.path == '/api/replay-cases' and not url.query:
+                self.send(200, replay_catalog())
+            elif url.path == '/api/replay':
+                try:
+                    query = parse_qs(url.query)
+                    if set(query) != {'id'} or len(query['id']) != 1:
+                        raise ValueError('请选择一个回放情形。')
+                    self.send(200, replay_case(query['id'][0]))
+                except ValueError as error:
+                    self.send(400, {'error': str(error)})
             else:
                 self.send(404, {'error': '页面不存在。'})
 
