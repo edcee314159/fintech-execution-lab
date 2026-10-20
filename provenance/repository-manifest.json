@@ -16,7 +16,7 @@
     "provenance/real-volume-sources.json": "67373fddd3d25b36e09e17431f3b54f058a841fe473ec30ab9ecb040dfbfacbc",
     "provenance/release-verification.json": "f96eeab5ec435b20a75e577a11210dbda494ab559497086bef0517177e7ec967",
     "pyproject.toml": "b427a155dabf7e0381966fd2388cb3f8ef712df9b062ba218e8654bd63ebeb7c",
-    "README.md": "30652d2b8e2c81480fcf0fa4caa2f4db2b97fc0aa11c871c90cc3989ef039159",
+    "README.md": "2acaabb29b778f9a93665c6e56109aedf6dd64fdab8af9aaf480576fbbc97578",
     "requirements.lock": "ad594480e17dec767a6c7f54f078846053b07d52007bb807a24ded4ac032d294",
     "results/core/cost-distribution.png": "b75077a80796cef0f50c4202109daae92ff6be307b5c2c37c06ebcf372a7279b",
     "results/core/manifest.json": "7264c8e67052743ed2000f8f779851cd609645b4ec3ea7c7abc17edab97edf14",
@@ -183,6 +183,7 @@
     "tests/test_config.py": "55da412a9fc9038f00e2f588c4bcd424afa813f8af74fd2995bd8d1ef54bd693",
     "tests/test_dashboard.py": "ee1e6ff170f056bf44bb07664a8732ec1a963d7fb0a89cf57deed5c013b8d6c4",
     "tests/test_dashboard_replay.py": "8ee21e2e899d42d6839cdb4bccb93c9fcc079aaeefbc4680aece7eac34e03573",
+    "tests/test_dashboard_upload.py": "72e57dbf31169bc4380e5c1fe278db744b69db24ce7889877d9f81417979bf47",
     "tests/test_metrics.py": "449c0d84e6892d7c5f33341a0c9927f68166b35812ac3b11ffce9a772e6c6b28",
     "tests/test_plotting.py": "e6cae57222d68c18b42efb36417b439b57f55d9e80d12e2e8f90e3ae920fd675",
     "tests/test_real_volume.py": "ad7156f5d1c976155c8ae0e710d887fb57b971a32939ac9c160094e488ac9bbf",
@@ -193,8 +194,9 @@
     "tests/test_unified.py": "28f252a66e2449e56b6af13fe6c3de9c26bc626090304e035bdb6166b02d656d",
     "tools/bootstrap.py": "b8dfd6248317ee114fdaf9e135b04f3345a4e8965ae93d3452ac120b51e9dd7b",
     "tools/check.py": "264bfe29cc5386dd19889523211108cfae17fb4655581453f465c85b6f9ebcb4",
-    "tools/dashboard.html": "37aea5cf7ebe6e4613ddc262d1008b25796d81263e75c11827b71692b4f5e99e",
-    "tools/dashboard.py": "06b460e9feb873ad0abbcdcb0a3e90c3e2702a757a18d0c42869f55a58fb89ce",
-    "tools/replay.js": "c4ebb06c3bc391b4359ef0f7d8f738b4116e2cac9cab30f6df76a0ad135a09c9"
+    "tools/dashboard.html": "8bfd6758dececf2541edb883e7ab4e1ccad43e700de2182cb01d8b9f8a339489",
+    "tools/dashboard.py": "5da98554e96df34796a7d4eb9479108342cbf3c7f6b87f0209eaa7de64498373",
+    "tools/replay.js": "c4ebb06c3bc391b4359ef0f7d8f738b4116e2cac9cab30f6df76a0ad135a09c9",
+    "tools/upload.js": "b232b2d1ce6912bd52562fb9213c33db982880d122acc153d52e19bde769e295"
   }
 }
