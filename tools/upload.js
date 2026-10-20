@@ -7,6 +7,7 @@ function showUpload(r){uploadReport=r;uq('#upload-result').hidden=false;uq('#upl
  const counts=uq('#upload-counts');counts.replaceChildren();for(const [key,label] of Object.entries(uploadNames))uploadRow(counts,[label,fmt(r.counts[key])]);
  const examples=uq('#upload-examples');examples.replaceChildren();if(!r.examples.length){const li=document.createElement('li');li.textContent='没有列出问题示例；仍需注意交易日历与数据来源限制。';examples.append(li);}for(const e of r.examples){const li=document.createElement('li');li.textContent=`第 ${e.line} 行：${e.message}`;examples.append(li);}
  const sessions=uq('#upload-sessions');sessions.replaceChildren();for(const s of r.sessions.slice(0,30))uploadRow(sessions,[s.date,s.valid_minutes,s.missing_minutes,s.complete?'完整':'排除 / 需检查']);
+ if(typeof refreshRollingUploads==='function')refreshRollingUploads(r.upload_id);
  uq('#upload-location').textContent=`本机目录：uploads/${r.upload_id}/。source.csv 原样保留；audit.json 为检查报告。通过格式检查时另存 loader-input.csv，仅调整表头、列序及单元格首尾空白，保留重复行供现有读取器按原规则处理。原文件 SHA-256：${r.source_sha256}`;
 }
 function readUpload(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('读取文件失败，请重新选择。'));reader.readAsDataURL(file);});}

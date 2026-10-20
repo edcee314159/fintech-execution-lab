@@ -5,6 +5,7 @@ from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import threading
 import uuid
+import importlib.util
 import base64
 import csv
 import io
@@ -20,6 +21,10 @@ from execution_lab.config import ExecutionConfig
 from execution_lab.schedule import make_twap, make_ac
 from execution_lab.simulation import run_paired
 from execution_lab.metrics import summarize
+
+_workflow_spec = importlib.util.spec_from_file_location('execution_dashboard_workflows', Path(__file__).with_name('workflows.py'))
+workflows = importlib.util.module_from_spec(_workflow_spec)
+_workflow_spec.loader.exec_module(workflows)
 
 
 def run_experiment(data):
@@ -239,7 +244,7 @@ def store_upload(payload, output):
     return report
 
 
-def make_server(port, output):
+def make_server(port, output, uploads_from=None):
     source = Path(__file__).resolve().parents[1]
     output = Path(output)
     if not output.is_absolute():
@@ -249,6 +254,7 @@ def make_server(port, output):
         raise ValueError('输出目录必须位于仓库之外。')
     output.mkdir(parents=True, exist_ok=True)
     gate = threading.Lock()
+    service = workflows.WorkflowService(output, uploads_from, validator=audit_csv, normalizer=_csv_records)
 
     class Handler(BaseHTTPRequestHandler):
         def setup(self):
@@ -274,8 +280,24 @@ def make_server(port, output):
             url = urlsplit(self.path)
             if url.path == '/' and not url.query:
                 self.send(200, Path(__file__).with_name('dashboard.html').read_bytes(), 'text/html; charset=utf-8')
-            elif url.path in ('/replay.js', '/upload.js') and not url.query:
+            elif url.path in ('/replay.js', '/upload.js', '/workflows.js') and not url.query:
                 self.send(200, Path(__file__).with_name(url.path[1:]).read_bytes(), 'text/javascript; charset=utf-8')
+            elif url.path == '/api/uploads' and not url.query:
+                self.send(200, service.list_uploads())
+            elif url.path.startswith('/api/rolling/') and not url.query:
+                try:
+                    self.send(200, service.status(url.path[len('/api/rolling/'):]))
+                except ValueError as error:
+                    self.send(400, {'error': str(error)})
+            elif url.path.startswith('/api/reports/') and not url.query:
+                try:
+                    parts = url.path.split('/')
+                    if len(parts) != 5:
+                        raise ValueError('报告地址不正确。')
+                    path, kind = service.report_file(parts[3], parts[4])
+                    self.send(200, path.read_bytes(), kind)
+                except ValueError as error:
+                    self.send(400, {'error': str(error)})
             elif url.path == '/api/replay-cases' and not url.query:
                 self.send(200, replay_catalog())
             elif url.path == '/api/replay':
@@ -290,7 +312,7 @@ def make_server(port, output):
                 self.send(404, {'error': '页面不存在。'})
 
         def do_POST(self):
-            if self.path not in ('/api/run', '/api/upload'):
+            if self.path not in ('/api/run', '/api/upload', '/api/rolling', '/api/report'):
                 self.send(404, {'error': '接口不存在。'}); return
             hosts = {f'127.0.0.1:{self.server.server_port}', f'localhost:{self.server.server_port}'}
             origin = self.headers.get('Origin')
@@ -311,9 +333,14 @@ def make_server(port, output):
                 payload = json.loads(body)
                 if self.path == '/api/upload':
                     result = store_upload(payload, output)
+                elif self.path == '/api/rolling':
+                    result = service.start(payload)
+                elif self.path == '/api/report':
+                    result = service.report(payload)
                 else:
                     result = run_experiment(payload)
-                    target = output / (uuid.uuid4().hex + '.json')
+                    result['experiment_id'] = uuid.uuid4().hex
+                    target = output / (result['experiment_id'] + '.json')
                     text = json.dumps(result, ensure_ascii=False, allow_nan=False, indent=2) + '\n'
                     target.write_text(text, encoding='utf-8', newline='\n')
 
@@ -333,9 +360,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True, help='Absolute experiment output directory outside source')
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--uploads-from', type=Path, help='Optional previous local output directory for existing uploads')
     args = parser.parse_args()
     try:
-        server = make_server(args.port, args.output)
+        server = make_server(args.port, args.output, args.uploads_from)
     except (ValueError, OSError) as error:
         parser.error(str(error))
     print(f'Local dashboard: http://127.0.0.1:{server.server_port}', flush=True)

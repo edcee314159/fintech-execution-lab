@@ -66,7 +66,21 @@
 <details><summary>按日期查看完整性（前 30 日，完整结果见 JSON）</summary><div class="metrics" style="padding:0;border:0"><table><thead><tr><th>日期</th><th>有效分钟</th><th>缺失分钟</th><th>完整性</th></tr></thead><tbody id="upload-sessions"></tbody></table></div></details>
 <p id="upload-location" class="help" style="overflow-wrap:anywhere"></p><div class="secondary"><button id="upload-download" type="button">下载检查报告 JSON</button></div>
 </div><div class="notice">当前规则检查纽约时间 09:30–15:59 的 390 个分钟。盘前盘后数据会单独计数；不识别文件中整天缺失、节假日或提前收盘。缺失时段不补零，不自动排序或替换异常值；成交量超过当日正成交量中位数 20 倍仅作复核提示。通过格式检查不代表数据真实、覆盖全市场或已有使用授权。</div>
-</section><footer>基础模型假设计划全部成交，不检查真实市场容量，也不模拟手续费、买卖价差或排队。本页不构成实际成交或盈利证明。实验结果自动保存在启动命令指定的外部目录。</footer></section></main>
+</section><section id="rolling" class="chart" aria-labelledby="rolling-heading"><h2 id="rolling-heading">06 / 上传数据的滚动验证</h2>
+<p class="subtitle">从已检查的本机 CSV 中选择数据。每个目标日只使用此前完整交易日训练，固定比较三种成交量预测与三种拆单方法。只使用最近指定数量的评估日；不会补造长期数据或更改原有回放。</p>
+<form id="rolling-form"><label>已检查的数据<select id="rolling-upload" required><option value="">正在读取…</option></select></label><div class="replay-filters">
+<label>回看完整交易日<input id="rolling-lookback" type="number" min="2" max="20" value="5" step="1" required></label>
+<label>最多评估交易日<input id="rolling-days" type="number" min="1" max="60" value="20" step="1" required></label>
+<label>订单 / 过去平均日量<select id="rolling-fraction"><option value="0.01">1%</option><option value="0.05" selected>5%</option><option value="0.09">9%</option></select></label>
+<label>每时段成交参与上限<select id="rolling-rate"><option value="0.05">5%</option><option value="0.1" selected>10%</option><option value="0.2">20%</option></select></label></div>
+<p class="help">至少需要回看天数 + 1 个完整日；影响系数与风险权重均固定为 0.00001。本模块独立于左侧基础模拟。短数据只验证实际可用日期，不能据此形成长期结论。</p>
+<div class="secondary"><button id="rolling-run" type="submit">开始滚动验证</button><button id="rolling-refresh" type="button">刷新数据列表</button></div></form>
+<div class="secondary"><button id="rolling-retry" type="button">重新查询任务</button></div><p id="rolling-status" class="status" role="status" aria-live="polite">等待选择数据。</p>
+<div id="rolling-result" hidden><div id="rolling-overview" class="notice"></div><div class="metrics" style="padding:0;border:0"><table><thead><tr><th>预测</th><th>拆单方法</th><th>全部情形</th><th>已计划</th><th>完成</th><th>未生成计划</th><th>平均剩余</th></tr></thead><tbody id="rolling-strategies"></tbody></table></div>
+<details><summary>按成交量与价格波动分组</summary><p class="help">事后与过去窗口中位数比较，低于 0.8 倍为低、高于 1.2 倍为高。分组不参与当日预测或下单；同一天的多种方案不是独立样本。</p><div class="metrics" style="padding:0;border:0"><table><thead><tr><th>维度</th><th>状态</th><th>预测</th><th>方法</th><th>日期</th><th>情形</th><th>完成</th></tr></thead><tbody id="rolling-regimes"></tbody></table></div></details></div></section>
+<section id="reports" class="chart" aria-labelledby="reports-heading"><h2 id="reports-heading">07 / 一键生成中文报告</h2><p class="subtitle">报告取自已保存的实验记录，包含实际参数、数据范围、图表、未完成情况与局限。修改参数而未重新运行时，不会把新参数写进旧结果的报告。</p>
+<div class="secondary"><button id="report-core" type="button">生成当前基础实验报告</button><button id="report-rolling" type="button" disabled>生成当前滚动验证报告</button></div><p id="report-status" class="status" role="status" aria-live="polite">请先运行基础实验或完成滚动验证。</p>
+<div id="report-actions" hidden><div class="secondary"><a id="report-view" target="_blank" rel="noopener">打开图文报告</a><button id="report-html" type="button">下载完整 HTML</button><button id="report-md" type="button">下载 Markdown</button><button id="report-json" type="button">下载数值依据 JSON</button></div><p class="help">HTML 包含图表，可离线阅读或用浏览器打印。Markdown 便于编辑，完整图表在 HTML 中；数值依据保留实验记录及其文件指纹。报告和数据均保存在本机，不自动发布。</p></div></section><footer>基础模型假设计划全部成交，不检查真实市场容量，也不模拟手续费、买卖价差或排队。本页不构成实际成交或盈利证明。实验结果自动保存在启动命令指定的外部目录。</footer></section></main>
 <script>
 'use strict';
 const form=document.querySelector('#form'),status=document.querySelector('#status');let current=null;
@@ -82,4 +96,4 @@ function stale(){if(current){status.className='status';status.textContent='参�
 form.addEventListener('input',stale);form.addEventListener('reset',stale);
 function download(text,type,name){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 document.querySelector('#json').onclick=()=>{if(current)download(JSON.stringify(current,null,2),'application/json','execution-result.json');};document.querySelector('#csv').onclick=()=>{if(!current)return;const c=current.config,rows=['时段,起点分钟,终点分钟,均匀卖出股数,模型拆单股数'];for(let i=0;i<c.intervals;i++)rows.push([i+1,i*c.duration/c.intervals,(i+1)*c.duration/c.intervals,...names.map(n=>current.schedules[n].quantities[i])].join(','));download('\uFEFF'+rows.join('\r\n'),'text/csv;charset=utf-8','execution-schedule.csv');};
-</script><script src="/replay.js" defer></script><script src="/upload.js" defer></script></body></html>
+</script><script src="/replay.js" defer></script><script src="/upload.js" defer></script><script src="/workflows.js" defer></script></body></html>
