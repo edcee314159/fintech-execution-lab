@@ -2,6 +2,12 @@
 import html
 import json
 import math
+import importlib.util
+from pathlib import Path
+_adaptive_spec=importlib.util.spec_from_file_location("execution_adaptive_reports",Path(__file__).with_name("adaptive_reports.py"))
+_adaptive_reports=importlib.util.module_from_spec(_adaptive_spec);_adaptive_spec.loader.exec_module(_adaptive_reports)
+_extension_spec=importlib.util.spec_from_file_location("execution_extension_reports",Path(__file__).with_name("extension_reports.py"))
+_extension_reports=importlib.util.module_from_spec(_extension_spec);_extension_spec.loader.exec_module(_extension_reports)
 
 
 def safe_text(value):
@@ -55,6 +61,8 @@ def labelled(rows):
 
 
 def render_report(kind, experiment, source_hash):
+    if kind=='adaptive':return _adaptive_reports.render(experiment,source_hash)
+    if kind in ('signal','orderbook'):return _extension_reports.render(kind,experiment,source_hash)
     title='拆单实验室 · '+('基础模型实验报告' if kind=='core' else '滚动成交容量验证报告')
     text=[f'# {title}',f'\n实验记录 SHA-256：`{source_hash}`']
     sections=[]

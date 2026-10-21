@@ -9,6 +9,16 @@ from execution_volume_validation.study import run_study
 _spec=importlib.util.spec_from_file_location('execution_dashboard_reports',Path(__file__).with_name('research_reports.py'))
 _reports=importlib.util.module_from_spec(_spec);_spec.loader.exec_module(_reports)
 safe_text=_reports.safe_text
+_adaptive_spec=importlib.util.spec_from_file_location('execution_dashboard_adaptive',Path(__file__).with_name('adaptive_execution.py'))
+_adaptive=importlib.util.module_from_spec(_adaptive_spec);_adaptive_spec.loader.exec_module(_adaptive)
+
+def _tool(name):
+    spec=importlib.util.spec_from_file_location('execution_'+name,Path(__file__).with_name(name+'.py'))
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+
+_signal=_tool('signal_execution')
+_orderbook=_tool('orderbook_execution')
+
 
 
 def identifier(value):
@@ -107,30 +117,48 @@ class WorkflowService:
             state.update(status='failed',phase='服务曾重启；该任务未确认完成，请重新运行。')
         return state
 
-    def start(self,payload):
-        config=options(payload)
+    def start(self,payload,*,adaptive=False):
+        return self._start(options(payload),'adaptive' if adaptive else 'rolling')
+
+    def start_signal(self,payload):
+        if not isinstance(payload,dict) or set(payload)!={'upload_id','lookback','evaluation_days','fraction','participation_rate','signal_scenario'}:
+            raise ValueError('请提供行情参数和信号情形。')
+        scenario=payload['signal_scenario']
+        if scenario not in _signal.SCENARIOS:raise ValueError('信号情形须为历史模型、无信号或反向信号。')
+        config=options({k:v for k,v in payload.items() if k!='signal_scenario'});config['signal_scenario']=scenario
+        return self._start(config,'signal')
+
+    def start_orderbook(self,payload):
+        return self._start(_orderbook.options(payload),'orderbook')
+
+    def _start(self,config,kind):
         if not self.work_lock.acquire(blocking=False):raise ValueError('已有滚动任务运行中，请等待其完成。')
         key=uuid.uuid4().hex
         try:
             (self.output/'rolling'/key).mkdir(parents=True)
-            self.states[key]={'id':key,'status':'queued','phase':'等待核对输入','parameters':config}
+            self.states[key]={'id':key,'status':'queued','phase':'等待核对输入','parameters':config,'kind':kind}
             self._set(key)
-            threading.Thread(target=self._worker,args=(key,config),daemon=True).start()
+            threading.Thread(target=self._worker,args=(key,config,kind),daemon=True).start()
         except Exception:
             self.work_lock.release();raise
         return self.status(key)
 
-    def _worker(self,key,config):
+    def _worker(self,key,config,kind='rolling'):
         try:
             self._set(key,status='running',phase='核对原文件、适配文件与历史顺序')
-            result=self._study(config,key)
+            if kind=='adaptive':result=self._study_adaptive(config,key)
+            elif kind=='signal':result=self._study_signal(config,key)
+            elif kind=='orderbook':
+                self._set(key,phase='生成明确标注的人工订单簿，并回放排队、延迟和成交')
+                result=_orderbook.run_study(config)
+            else:result=self._study(config,key)
             write_json(self.output/'rolling'/key/'result.json',result)
             self._set(key,status='succeeded',phase='验证完成',summary=result['dashboard_summary'])
         except Exception as error:
             self._set(key,status='failed',phase='任务失败，未生成可用结果',error=str(error))
         finally:self.work_lock.release()
 
-    def _study(self,config,key):
+    def _checked_input(self,config):
         folder=self.upload_folder(config['upload_id']);audit=json.loads((folder/'audit.json').read_text(encoding='utf-8'))
         raw=(folder/'source.csv').read_bytes();raw_hash=hashlib.sha256(raw).hexdigest()
         if raw_hash!=audit['source_sha256']:raise ValueError('原文件指纹已变化，请重新上传检查。')
@@ -145,6 +173,11 @@ class WorkflowService:
         if len(days)<=lookback:raise ValueError(f'至少需要 {lookback+1} 个完整交易日，当前只有 {len(days)} 个。')
         selected=days[-(lookback+config['evaluation_days']):]
         source_hash=hashlib.sha256(adapted_bytes).hexdigest()
+        return folder,audit,raw_hash,source_hash,days,selected
+
+    def _study(self,config,key):
+        folder,audit,raw_hash,source_hash,days,selected=self._checked_input(config)
+        lookback=config['lookback']
         design={'symbols':[audit['symbol']],'expected_dates':[d.day.isoformat() for d in selected],
                 'lookback':lookback,'fractions':[config['fraction']],'participation_rate':config['participation_rate'],
                 'impact':1e-5,'risk_aversion':1e-5,
@@ -178,12 +211,46 @@ class WorkflowService:
                       generated_utc=datetime.now(timezone.utc).isoformat())
         return result
 
+    def _study_adaptive(self,config,key):
+        folder,audit,raw_hash,source_hash,days,selected=self._checked_input(config)
+        self._set(key,phase=f'动态验证 {len(selected)-config["lookback"]} 个评估日；每五分钟只使用此前数据')
+        result=_adaptive.run_study(days,config)
+        result.update(title='成交容量风险预警与动态拆单',
+                      input_provenance={'upload_id':config['upload_id'],'source_sha256':raw_hash,'loader_sha256':source_hash,
+                                        'origin_note':audit.get('origin_note','用户本地输入，真实性未独立核实')},
+                      generated_utc=datetime.now(timezone.utc).isoformat())
+        return result
+
+    def _study_signal(self,config,key):
+        folder,audit,raw_hash,source_hash,days,selected=self._checked_input(config)
+        self._set(key,phase='逐日训练信号、历史样本外验证权重，再进行目标日执行对照')
+        result=_signal.run_study(days,config)
+        result.update(input_provenance={'upload_id':config['upload_id'],'source_sha256':raw_hash,'loader_sha256':source_hash,
+                                      'origin_note':audit.get('origin_note','用户本地输入，真实性未独立核实')},
+                      generated_utc=datetime.now(timezone.utc).isoformat())
+        return result
+
+    def extension_result(self,key):
+        state=self.status(key)
+        if state.get('kind') not in ('signal','orderbook') or state['status']!='succeeded':
+            raise ValueError('信号或订单簿任务尚未成功完成，或记录类型不正确。')
+        return json.loads((self.output/'rolling'/identifier(key)/'result.json').read_text(encoding='utf-8'))
+
+    def adaptive_result(self,key):
+        state=self.status(key)
+        if state.get('kind')!='adaptive' or state['status']!='succeeded':
+            raise ValueError('动态任务尚未成功完成，或记录类型不正确。')
+        return json.loads((self.output/'rolling'/identifier(key)/'result.json').read_text(encoding='utf-8'))
+
     def report(self,payload):
-        if not isinstance(payload,dict) or set(payload)!={'kind','id'} or payload['kind'] not in ('core','rolling'):
+        if not isinstance(payload,dict) or set(payload)!={'kind','id'} or payload['kind'] not in ('core','rolling','adaptive','signal','orderbook'):
             raise ValueError('请选择已保存的基础实验或已完成的滚动任务。')
         key=identifier(payload['id']);kind=payload['kind']
         source=self.output/(key+'.json') if kind=='core' else self.output/'rolling'/key/'result.json'
-        if kind=='rolling' and self.status(key)['status']!='succeeded':raise ValueError('该任务尚未成功完成。')
+        if kind!='core':
+            state=self.status(key)
+            if state['status']!='succeeded':raise ValueError('该任务尚未成功完成。')
+            if state.get('kind','rolling')!=kind:raise ValueError('报告类型与任务不一致。')
         if not source.is_file():raise ValueError('找不到实验记录，请先运行实验。')
         raw=source.read_bytes();experiment=json.loads(raw);source_hash=hashlib.sha256(raw).hexdigest()
         page,markdown=_reports.render_report(kind,experiment,source_hash)

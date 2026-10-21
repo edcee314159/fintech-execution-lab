@@ -280,10 +280,20 @@ def make_server(port, output, uploads_from=None):
             url = urlsplit(self.path)
             if url.path == '/' and not url.query:
                 self.send(200, Path(__file__).with_name('dashboard.html').read_bytes(), 'text/html; charset=utf-8')
-            elif url.path in ('/replay.js', '/upload.js', '/workflows.js') and not url.query:
+            elif url.path in ('/replay.js', '/upload.js', '/workflows.js', '/adaptive.js', '/extensions.js') and not url.query:
                 self.send(200, Path(__file__).with_name(url.path[1:]).read_bytes(), 'text/javascript; charset=utf-8')
             elif url.path == '/api/uploads' and not url.query:
                 self.send(200, service.list_uploads())
+            elif url.path.startswith('/api/extensions/') and not url.query:
+                try:
+                    self.send(200, service.extension_result(url.path[len('/api/extensions/'):]))
+                except ValueError as error:
+                    self.send(400, {'error': str(error)})
+            elif url.path.startswith('/api/adaptive/') and not url.query:
+                try:
+                    self.send(200, service.adaptive_result(url.path[len('/api/adaptive/'):]))
+                except ValueError as error:
+                    self.send(400, {'error': str(error)})
             elif url.path.startswith('/api/rolling/') and not url.query:
                 try:
                     self.send(200, service.status(url.path[len('/api/rolling/'):]))
@@ -312,7 +322,7 @@ def make_server(port, output, uploads_from=None):
                 self.send(404, {'error': '页面不存在。'})
 
         def do_POST(self):
-            if self.path not in ('/api/run', '/api/upload', '/api/rolling', '/api/report'):
+            if self.path not in ('/api/run', '/api/upload', '/api/rolling', '/api/report', '/api/adaptive', '/api/signal', '/api/orderbook'):
                 self.send(404, {'error': '接口不存在。'}); return
             hosts = {f'127.0.0.1:{self.server.server_port}', f'localhost:{self.server.server_port}'}
             origin = self.headers.get('Origin')
@@ -333,8 +343,12 @@ def make_server(port, output, uploads_from=None):
                 payload = json.loads(body)
                 if self.path == '/api/upload':
                     result = store_upload(payload, output)
-                elif self.path == '/api/rolling':
-                    result = service.start(payload)
+                elif self.path == '/api/signal':
+                    result = service.start_signal(payload)
+                elif self.path == '/api/orderbook':
+                    result = service.start_orderbook(payload)
+                elif self.path in ('/api/rolling', '/api/adaptive'):
+                    result = service.start(payload, adaptive=self.path == '/api/adaptive')
                 elif self.path == '/api/report':
                     result = service.report(payload)
                 else:
