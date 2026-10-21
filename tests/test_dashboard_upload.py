@@ -79,3 +79,12 @@ def test_upload_stays_external_and_is_compatible_with_existing_loader(tmp_path):
         assert e.value.code==403
         assert len(list((tmp_path/'uploads').iterdir()))==1
     finally:server.shutdown();server.server_close();thread.join()
+
+
+@pytest.mark.parametrize('length', [13, 16])
+def test_overlong_symbols_are_rejected_before_saving_upload(tmp_path, length):
+    payload={'symbol':'A'*length,'timezone':'America/New_York',
+             'csv_base64':base64.b64encode(data(rows(3))).decode()}
+    with pytest.raises(ValueError, match=r'1 \u81f3 12 \u4f4d'):
+        d.store_upload(payload,tmp_path)
+    assert not (tmp_path/'uploads').exists()

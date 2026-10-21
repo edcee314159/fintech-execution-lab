@@ -102,3 +102,15 @@ def test_completed_rolling_has_real_plans_and_escaped_portable_reports(tmp_path)
     page=(tmp_path/'reports'/report['id']/'report.html').read_text(encoding='utf-8')
     assert '<script>alert(1)</script>' not in page and '&lt;script&gt;' in page
     assert service(tmp_path).status(state['id'])['status']=='succeeded'
+
+
+@pytest.mark.parametrize('symbol', ['a', 'AbCdEfGhIjKl'])
+def test_accepted_symbol_boundaries_complete_rolling_validation(tmp_path, symbol):
+    u=d.store_upload({'symbol':symbol,'timezone':'America/New_York',
+                     'csv_base64':base64.b64encode(sample(3)).decode()},tmp_path)
+    assert u['format_valid'] and u['symbol']==symbol.upper()
+    s=service(tmp_path)
+    state=wait(s,s.start({'upload_id':u['upload_id'],'lookback':2,'evaluation_days':1,
+                          'fraction':.01,'participation_rate':.1}))
+    assert state['status']=='succeeded',state
+    assert state['summary']['cases']==state['summary']['completed']==9

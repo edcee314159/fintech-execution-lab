@@ -109,8 +109,8 @@ def _csv_records(raw):
 
 
 def audit_csv(raw, symbol):
-    if not isinstance(symbol, str) or not re.fullmatch(r'[A-Za-z][A-Za-z0-9._-]{0,15}', symbol):
-        raise ValueError('标的代码须为 1 至 16 位英文字母、数字、点、横线或下划线，并以字母开头。')
+    if not isinstance(symbol, str) or not re.fullmatch(r'[A-Za-z][A-Za-z0-9._-]{0,11}', symbol):
+        raise ValueError('标的代码须为 1 至 12 位英文字母、数字、点、横线或下划线，并以字母开头。')
     records = _csv_records(raw)
     keys = ('invalid_timestamp', 'invalid_columns', 'invalid_ohlc', 'invalid_volume', 'invalid_session_date',
             'exact_duplicates', 'conflicting_duplicates', 'out_of_order', 'outside_session',

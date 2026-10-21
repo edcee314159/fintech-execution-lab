@@ -52,7 +52,7 @@
 <h2 id="upload-heading">05 / 上传自己的行情 CSV</h2>
 <p class="subtitle">文件只发送给本机服务并保存在外部输出目录，不上传到 GitHub。每次检查使用新目录，不覆盖现有历史研究。单个文件最多 5 MiB、100000 行，且只包含一个标的。</p>
 <form id="upload-form"><div class="replay-filters">
-<label>标的代码<input id="upload-symbol" value="SPY" pattern="[A-Za-z][A-Za-z0-9._-]{0,15}" maxlength="16" required></label>
+<label>标的代码<input id="upload-symbol" value="SPY" pattern="[A-Za-z][A-Za-z0-9._-]{0,11}" maxlength="12" required></label>
 <label style="grid-column:span 2">选择 UTF-8 CSV 文件<input id="upload-file" type="file" accept=".csv,text/csv" required></label></div>
 <p class="subtitle">支持有表头或无表头的六列格式：<code>timestamp,open,high,low,close,volume</code>。每行代表一分钟的起始时刻，例：<code>2026-09-21 09:30:00,100,101,99,100,1000</code>。价格和成交量须为普通数字，不含千位逗号。</p>
 <label class="upload-check"><input id="upload-timezone" type="checkbox" required>我确认文件中的时间已是纽约本地时间，且数据为一分钟行情；本工具不自动转换时区。</label>
