@@ -60,7 +60,11 @@ def labelled(rows):
     return [{**r,'predictor':PREDICTORS.get(r['predictor'],r['predictor']),'planner':PLANNERS.get(r['planner'],r['planner'])} for r in rows]
 
 
+_allocation_spec=importlib.util.spec_from_file_location("execution_allocation_reports",Path(__file__).with_name("allocation_reports.py"))
+_allocation_reports=importlib.util.module_from_spec(_allocation_spec);_allocation_spec.loader.exec_module(_allocation_reports)
+
 def render_report(kind, experiment, source_hash):
+    if kind in ('budget','pairs'):return _allocation_reports.render(kind,experiment,source_hash)
     if kind=='adaptive':return _adaptive_reports.render(experiment,source_hash)
     if kind in ('signal','orderbook'):return _extension_reports.render(kind,experiment,source_hash)
     title='拆单实验室 · '+('基础模型实验报告' if kind=='core' else '滚动成交容量验证报告')

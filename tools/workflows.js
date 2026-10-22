@@ -4,17 +4,21 @@ let rollingJob=null,rollingPoll=null,rollingQueryBusy=false,generatedReport=null
 function workflowRow(parent,values){const row=document.createElement('tr');for(const v of values){const cell=document.createElement('td');cell.textContent=String(v);row.append(cell);}parent.append(row);}
 async function workflowPost(path,payload){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'操作失败');return data;}
 async function refreshRollingUploads(preferred){try{const response=await fetch('/api/uploads');if(!response.ok)throw new Error('无法读取已上传数据');const entries=await response.json(),select=wq('#rolling-upload'),before=select.value;select.replaceChildren();for(const r of entries){const option=document.createElement('option');option.value=r.id;option.textContent=`${r.symbol} · ${r.complete_sessions} 个完整日 · ${r.format_valid?'格式通过':'需要核实'} · ${r.origin_note}`;option.disabled=!r.format_valid;select.append(option);}const valid=entries.filter(r=>r.format_valid);if(!valid.length){const o=document.createElement('option');o.value='';o.textContent='请先上传并检查 CSV';select.append(o);select.value='';}else select.value=valid.some(r=>r.id===preferred)?preferred:(valid.some(r=>r.id===before)?before:valid[0].id);if(!rollingJob)wq('#rolling-status').textContent=valid.length?'数据列表已更新，请设置窗口。':'暂无格式通过的数据。先在上方上传；数据只保存在本机。';}catch(e){wq('#rolling-status').textContent=e.message;}}
-function rollingBusy(value){for(const id of ['#rolling-form','#orderbook-form'])for(const c of wq(id).elements)c.disabled=value;}
+function rollingBusy(value){for(const id of ['#rolling-form','#orderbook-form','#budget-form','#pairs-form'])for(const c of wq(id).elements)c.disabled=value;}
 function showRolling(state){
   rollingJob=state;wq('#rolling-status').textContent=state.phase+(state.error?'：'+state.error:'');
   if(state.status==='succeeded'){
-    const s=state.summary,isAdaptive=state.kind==='adaptive',isExtension=['signal','orderbook'].includes(state.kind);
+    const s=state.summary,isAdaptive=state.kind==='adaptive',isExtension=['signal','orderbook'].includes(state.kind),isBusiness=['budget','pairs'].includes(state.kind);
+    wq('#business-result').hidden=!isBusiness;
     wq('#extension-result').hidden=!isExtension;
     wq('#rolling-result').hidden=false;wq('#report-rolling').disabled=false;
     wq('#adaptive-result').hidden=!isAdaptive;
-    wq('#rolling-strategies').closest('.metrics').hidden=isAdaptive||isExtension;
-    wq('#rolling-regimes').closest('details').hidden=isAdaptive||isExtension;
-    if(isExtension){
+    wq('#rolling-strategies').closest('.metrics').hidden=isAdaptive||isExtension||isBusiness;
+    wq('#rolling-regimes').closest('details').hidden=isAdaptive||isExtension||isBusiness;
+    if(isBusiness){
+      wq('#rolling-overview').textContent=state.kind==='budget'?'成本预算：规划集选择，独立随机集检验。':'双资产执行：32条配对人工路径，保留所有未完成情形。';
+      loadBusinessResult(state.id,state.kind);
+    }else if(isExtension){
       wq('#rolling-overview').textContent=state.kind==='signal'?`信号验证：${s.evaluation_start} 至 ${s.evaluation_end}，${s.evaluation_days} 个评估日；三种执行方案共 ${s.cases} 条情形。`:`人工订单簿：种子 ${s.seed}，${s.ticks} 个1秒步，订单 ${s.quantity} 股。全部事件由程序生成。`;
       loadExtensionResult(state.id,state.kind);
     }else if(isAdaptive){
@@ -46,7 +50,7 @@ async function pollRolling(){
 async function startStudy(path,payload){
   rollingBusy(true);rollingJob=null;reportToken++;wq('#report-core').disabled=false;
   wq('#rolling-result').hidden=true;wq('#report-rolling').disabled=true;wq('#rolling-status').textContent='正在创建后台任务…';
-  wq('#report-actions').hidden=true;generatedReport=null;resetAdaptiveResult();resetExtensionResult();if(rollingPoll)clearTimeout(rollingPoll);
+  wq('#report-actions').hidden=true;generatedReport=null;resetAdaptiveResult();resetExtensionResult();resetBusinessResult();if(rollingPoll)clearTimeout(rollingPoll);
   try{showRolling(await workflowPost(path,payload));}
   catch(e){wq('#rolling-status').textContent=e.message;rollingBusy(false);}
 }
@@ -68,7 +72,7 @@ async function generateReport(kind){
   wq('#report-status').textContent='正在生成报告…';wq('#report-actions').hidden=true;generatedReport=null;
   try{const report=await workflowPost('/api/report',{kind,id:key});if(token!==reportToken)return;
     generatedReport=report;wq('#report-actions').hidden=false;wq('#report-view').href=report.html_url;
-    wq('#report-status').textContent=`报告已生成，任务类型 ${({core:'基础模拟',rolling:'固定计划验证',adaptive:'动态容量验证',signal:'信号执行',orderbook:'人工订单簿'})[kind]}，编号 ${key}。实验记录指纹：${report.source_sha256}`;
+    wq('#report-status').textContent=`报告已生成，任务类型 ${({core:'基础模拟',rolling:'固定计划验证',adaptive:'动态容量验证',signal:'信号执行',orderbook:'人工订单簿',budget:'成本预算',pairs:'双资产协同'})[kind]}，编号 ${key}。实验记录指纹：${report.source_sha256}`;
   }catch(e){if(token===reportToken)wq('#report-status').textContent=e.message;}
   finally{if(token===reportToken){wq('#report-core').disabled=false;wq('#report-rolling').disabled=rollingJob?.status!=='succeeded';}}
 }

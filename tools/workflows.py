@@ -18,6 +18,8 @@ def _tool(name):
 
 _signal=_tool('signal_execution')
 _orderbook=_tool('orderbook_execution')
+_budget=_tool('budget_execution')
+_pairs=_tool('pairs_execution')
 
 
 
@@ -131,6 +133,12 @@ class WorkflowService:
     def start_orderbook(self,payload):
         return self._start(_orderbook.options(payload),'orderbook')
 
+    def start_budget(self,payload):
+        return self._start(_budget.options(payload),'budget')
+
+    def start_pairs(self,payload):
+        return self._start(_pairs.options(payload),'pairs')
+
     def _start(self,config,kind):
         if not self.work_lock.acquire(blocking=False):raise ValueError('已有滚动任务运行中，请等待其完成。')
         key=uuid.uuid4().hex
@@ -151,6 +159,9 @@ class WorkflowService:
             elif kind=='orderbook':
                 self._set(key,phase='生成明确标注的人工订单簿，并回放排队、延迟和成交')
                 result=_orderbook.run_study(config)
+            elif kind in ('budget','pairs'):
+                self._set(key,phase='运行人工场景，对照成本、完成情况与约束')
+                result=(_budget if kind=='budget' else _pairs).run_study(config)
             else:result=self._study(config,key)
             write_json(self.output/'rolling'/key/'result.json',result)
             self._set(key,status='succeeded',phase='验证完成',summary=result['dashboard_summary'])
@@ -232,8 +243,8 @@ class WorkflowService:
 
     def extension_result(self,key):
         state=self.status(key)
-        if state.get('kind') not in ('signal','orderbook') or state['status']!='succeeded':
-            raise ValueError('信号或订单簿任务尚未成功完成，或记录类型不正确。')
+        if state.get('kind') not in ('signal','orderbook','budget','pairs') or state['status']!='succeeded':
+            raise ValueError('扩展实验尚未成功完成，或记录类型不正确。')
         return json.loads((self.output/'rolling'/identifier(key)/'result.json').read_text(encoding='utf-8'))
 
     def adaptive_result(self,key):
@@ -243,7 +254,7 @@ class WorkflowService:
         return json.loads((self.output/'rolling'/identifier(key)/'result.json').read_text(encoding='utf-8'))
 
     def report(self,payload):
-        if not isinstance(payload,dict) or set(payload)!={'kind','id'} or payload['kind'] not in ('core','rolling','adaptive','signal','orderbook'):
+        if not isinstance(payload,dict) or set(payload)!={'kind','id'} or payload['kind'] not in ('core','rolling','adaptive','signal','orderbook','budget','pairs'):
             raise ValueError('请选择已保存的基础实验或已完成的滚动任务。')
         key=identifier(payload['id']);kind=payload['kind']
         source=self.output/(key+'.json') if kind=='core' else self.output/'rolling'/key/'result.json'
