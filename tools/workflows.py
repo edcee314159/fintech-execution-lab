@@ -20,6 +20,8 @@ _signal=_tool('signal_execution')
 _orderbook=_tool('orderbook_execution')
 _budget=_tool('budget_execution')
 _pairs=_tool('pairs_execution')
+_recovery=_tool('order_recovery')
+_marketguard=_tool('market_guard')
 
 
 
@@ -139,6 +141,10 @@ class WorkflowService:
     def start_pairs(self,payload):
         return self._start(_pairs.options(payload),'pairs')
 
+    def start_safety(self,payload,kind):
+        if kind not in ('recovery','marketguard'):raise ValueError('未知安全实验。')
+        return self._start((_recovery if kind=='recovery' else _marketguard).options(payload),kind)
+
     def _start(self,config,kind):
         if not self.work_lock.acquire(blocking=False):raise ValueError('已有滚动任务运行中，请等待其完成。')
         key=uuid.uuid4().hex
@@ -162,6 +168,9 @@ class WorkflowService:
             elif kind in ('budget','pairs'):
                 self._set(key,phase='运行人工场景，对照成本、完成情况与约束')
                 result=(_budget if kind=='budget' else _pairs).run_study(config)
+            elif kind in ('recovery','marketguard'):
+                self._set(key,phase='运行人工故障、核对数量和状态保护')
+                result=(_recovery.run_study(config,self.output/'rolling'/key) if kind=='recovery' else _marketguard.run_study(config))
             else:result=self._study(config,key)
             write_json(self.output/'rolling'/key/'result.json',result)
             self._set(key,status='succeeded',phase='验证完成',summary=result['dashboard_summary'])
@@ -243,7 +252,7 @@ class WorkflowService:
 
     def extension_result(self,key):
         state=self.status(key)
-        if state.get('kind') not in ('signal','orderbook','budget','pairs') or state['status']!='succeeded':
+        if state.get('kind') not in ('signal','orderbook','budget','pairs','recovery','marketguard') or state['status']!='succeeded':
             raise ValueError('扩展实验尚未成功完成，或记录类型不正确。')
         return json.loads((self.output/'rolling'/identifier(key)/'result.json').read_text(encoding='utf-8'))
 
@@ -254,7 +263,7 @@ class WorkflowService:
         return json.loads((self.output/'rolling'/identifier(key)/'result.json').read_text(encoding='utf-8'))
 
     def report(self,payload):
-        if not isinstance(payload,dict) or set(payload)!={'kind','id'} or payload['kind'] not in ('core','rolling','adaptive','signal','orderbook','budget','pairs'):
+        if not isinstance(payload,dict) or set(payload)!={'kind','id'} or payload['kind'] not in ('core','rolling','adaptive','signal','orderbook','budget','pairs','recovery','marketguard'):
             raise ValueError('请选择已保存的基础实验或已完成的滚动任务。')
         key=identifier(payload['id']);kind=payload['kind']
         source=self.output/(key+'.json') if kind=='core' else self.output/'rolling'/key/'result.json'

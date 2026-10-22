@@ -5,7 +5,7 @@ import pytest
 PRELUDE=r"""
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),nodes=new Map(),timers=new Map();let sequence=0;
 function node(id){if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',hidden:false,disabled:false,elements:[],children:[],replaceChildren(){this.children=[];},append(x){this.children.push(x);},addEventListener(){},closest(){return this;}});return nodes.get(id);}
-const ctx={document:{querySelector:node,createElement:()=>node('created'+(++sequence))},current:{experiment_id:'core-A'},resetAdaptiveResult(){},resetExtensionResult(){},resetBusinessResult(){},
+const ctx={document:{querySelector:node,createElement:()=>node('created'+(++sequence))},current:{experiment_id:'core-A'},resetAdaptiveResult(){},resetExtensionResult(){},resetBusinessResult(){},resetSafetyResult(){},
 fetch:async()=>({ok:true,json:async()=>[]}),setTimeout(f){const id=++sequence;timers.set(id,f);return id;},clearTimeout(id){timers.delete(id);}};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync(process.argv[1],'utf8'),ctx);
 """

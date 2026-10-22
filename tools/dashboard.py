@@ -280,7 +280,7 @@ def make_server(port, output, uploads_from=None):
             url = urlsplit(self.path)
             if url.path == '/' and not url.query:
                 self.send(200, Path(__file__).with_name('dashboard.html').read_bytes(), 'text/html; charset=utf-8')
-            elif url.path in ('/replay.js', '/upload.js', '/workflows.js', '/adaptive.js', '/extensions.js', '/budget_pairs.js') and not url.query:
+            elif url.path in ('/replay.js', '/upload.js', '/workflows.js', '/adaptive.js', '/extensions.js', '/budget_pairs.js', '/execution_safety.js') and not url.query:
                 self.send(200, Path(__file__).with_name(url.path[1:]).read_bytes(), 'text/javascript; charset=utf-8')
             elif url.path == '/api/uploads' and not url.query:
                 self.send(200, service.list_uploads())
@@ -322,7 +322,7 @@ def make_server(port, output, uploads_from=None):
                 self.send(404, {'error': '页面不存在。'})
 
         def do_POST(self):
-            if self.path not in ('/api/run', '/api/upload', '/api/rolling', '/api/report', '/api/adaptive', '/api/signal', '/api/orderbook', '/api/budget', '/api/pairs'):
+            if self.path not in ('/api/run', '/api/upload', '/api/rolling', '/api/report', '/api/adaptive', '/api/signal', '/api/orderbook', '/api/budget', '/api/pairs', '/api/recovery', '/api/marketguard'):
                 self.send(404, {'error': '接口不存在。'}); return
             hosts = {f'127.0.0.1:{self.server.server_port}', f'localhost:{self.server.server_port}'}
             origin = self.headers.get('Origin')
@@ -345,6 +345,8 @@ def make_server(port, output, uploads_from=None):
                     result = store_upload(payload, output)
                 elif self.path == '/api/signal':
                     result = service.start_signal(payload)
+                elif self.path in ('/api/recovery','/api/marketguard'):
+                    result = service.start_safety(payload,self.path.removeprefix('/api/'))
                 elif self.path == '/api/budget':
                     result = service.start_budget(payload)
                 elif self.path == '/api/pairs':
